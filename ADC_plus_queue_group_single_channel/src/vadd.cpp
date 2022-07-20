@@ -34,7 +34,7 @@
 template<const int query_num, const int nprobe, const int AXI_entries_every_cell>
 void load_PQ_codes(
     const ap_uint<512>* DRAM,
-    hls::stream<PQ_in_t> (&s_single_PQ)[ADC_PE_PER_CHANNEL]
+    hls::stream<PQ_in_t> (&s_single_PQ)[VEC_PER_CHANNEL]
 ) {
 
     // TODO: for real test, should have a table that maps cell_ID to start_address
@@ -49,7 +49,7 @@ void load_PQ_codes(
 #pragma HLS pipeline II=1
                 ap_uint<512> PQ_reg_multi_channel = DRAM[AXI_entries_every_cell];
 
-                for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
+                for (int s = 0; s < VEC_PER_CHANNEL; s++) {
 #pragma HLS unroll
                     PQ_in_t PQ_reg;
                     
@@ -61,7 +61,7 @@ void load_PQ_codes(
                     //
                     //
                     PQ_reg.cell_ID = nprobe_id; 
-                    PQ_reg.offset = entry_id * ADC_PE_PER_CHANNEL + s;
+                    PQ_reg.offset = entry_id * VEC_PER_CHANNEL + s;
                     // refer: https://github.com/WenqiJiang/FPGA-ANNS/blob/main/integrated_accelerator/entire-node-systolic-computation-without-FIFO-type-assignment-fine-grained-PE-with-queue-group-inlined/src/HBM_interconnections.hpp
                     for (int m = 0; m < M; m++) {
 #pragma HLS unroll
@@ -207,10 +207,10 @@ void PQ_lookup_computation(
 
 template<const int query_num, const int nprobe, const int scanned_entries_every_cell>
 void write_result(
-    hls::stream<PQ_out_t> (&s_result)[ADC_PE_PER_CHANNEL]
+    hls::stream<PQ_out_t> (&s_result)[VEC_PER_CHANNEL]
     , ap_uint<96>* results_out) {
     
-    PQ_out_t reg[ADC_PE_PER_CHANNEL];
+    PQ_out_t reg[VEC_PER_CHANNEL];
 
     for (int query_id = 0; query_id < query_num; query_id++) {
 
@@ -219,7 +219,7 @@ void write_result(
             for (int entry_id = 0; entry_id < scanned_entries_every_cell; entry_id++) {
 #pragma HLS pipeline II=1
 
-                for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
+                for (int s = 0; s < VEC_PER_CHANNEL; s++) {
 #pragma HLS unroll
                     reg[s] = s_result[s].read();
                 }
@@ -253,51 +253,51 @@ void vadd(
 
 #pragma HLS dataflow
 
-    hls::stream<PQ_in_t> s_PQ_codes[ADC_PE_PER_CHANNEL];
+    hls::stream<PQ_in_t> s_PQ_codes[VEC_PER_CHANNEL];
 #pragma HLS stream variable=s_PQ_codes depth=8
 #pragma HLS array_partition variable=s_PQ_codes complete
 // #pragma HLS resource variable=s_PQ_codes core=FIFO_SRL
 
-    hls::stream<PQ_out_t> s_single_PQ_result[ADC_PE_PER_CHANNEL];
+    hls::stream<PQ_out_t> s_single_PQ_result[VEC_PER_CHANNEL];
 #pragma HLS stream variable=s_single_PQ_result depth=8
 #pragma HLS array_partition variable=s_single_PQ_result complete
 // #pragma HLS resource variable=s_single_PQ_result core=FIFO_SRL
 
-    hls::stream<int> s_scanned_entries_every_cell[ADC_PE_PER_CHANNEL];
+    hls::stream<int> s_scanned_entries_every_cell[VEC_PER_CHANNEL];
 #pragma HLS stream variable=s_scanned_entries_every_cell depth=8
 #pragma HLS array_partition variable=s_scanned_entries_every_cell complete
 // #pragma HLS resource variable=s_scanned_entries_every_cell core=FIFO_SRL
 
-    hls::stream<distance_LUT_parallel_t> s_distance_LUT_in[ADC_PE_PER_CHANNEL];
+    hls::stream<distance_LUT_parallel_t> s_distance_LUT_in[VEC_PER_CHANNEL];
 #pragma HLS stream variable=s_distance_LUT_in depth=8
 #pragma HLS array_partition variable=s_distance_LUT_in complete
 // #pragma HLS resource variable=s_distance_LUT_in core=FIFO_SRL
 
-    hls::stream<distance_LUT_parallel_t> s_distance_LUT_out[ADC_PE_PER_CHANNEL];
+    hls::stream<distance_LUT_parallel_t> s_distance_LUT_out[VEC_PER_CHANNEL];
 #pragma HLS stream variable=s_distance_LUT_out depth=8
 #pragma HLS array_partition variable=s_PQ_codes complete
 // #pragma HLS resource variable=s_distance_LUT_out core=FIFO_SRL
 
-#define COMPUTE_ITER_PER_PE (SCANNED_ENTRIES_PER_CELL / ADC_PE_PER_CHANNEL)
+#define COMPUTE_ITER_PER_PE (SCANNED_ENTRIES_PER_CELL / VEC_PER_CHANNEL)
     load_PQ_codes<QUERY_NUM, NPROBE, COMPUTE_ITER_PER_PE>(
         in,
         s_PQ_codes);
 
-    for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
+    for (int s = 0; s < VEC_PER_CHANNEL; s++) {
 #pragma HLS unroll
     dummy_scanned_entries_every_cell<QUERY_NUM, NPROBE>(
         COMPUTE_ITER_PER_PE,
         s_scanned_entries_every_cell[s]);
     }
 
-    for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
+    for (int s = 0; s < VEC_PER_CHANNEL; s++) {
 #pragma HLS unroll
     dummy_distance_LUT_sender<QUERY_NUM,  NPROBE>(
         s_distance_LUT_in[s]);
     }
 
 ////////////////////    Core Function Starts     //////////////////// 
-    for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
+    for (int s = 0; s < VEC_PER_CHANNEL; s++) {
 #pragma HLS unroll
         PQ_lookup_computation<QUERY_NUM, NPROBE, COMPUTE_ITER_PER_PE>(
             // input streams
@@ -311,7 +311,7 @@ void vadd(
 
 ////////////////////    Core Function Ends     //////////////////// 
 
-    for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
+    for (int s = 0; s < VEC_PER_CHANNEL; s++) {
 #pragma HLS unroll
     dummy_distance_LUT_consumer<QUERY_NUM,  NPROBE>(
         s_distance_LUT_out[s]);

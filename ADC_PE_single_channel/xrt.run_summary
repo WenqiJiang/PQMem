@@ -5,10 +5,10 @@
         "patch": "0"
     },
     "generation": {
-        "this_file": "\/pub\/scratch\/wenqi\/PQMem\/Single_ADC_PE\/xrt.run_summary",
+        "this_file": "\/pub\/scratch\/wenqi\/PQMem\/ADC_PE_single_channel\/xrt.run_summary",
         "source": "vp",
-        "PID": "91044",
-        "timestamp": "1658218088593"
+        "PID": "122527",
+        "timestamp": "1658242975954"
     },
     "files": [
         {
