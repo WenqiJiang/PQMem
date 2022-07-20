@@ -27,9 +27,16 @@ typedef struct {
     float dist;  // invalid elements are marked as dist=LARGE_NUM
 } PQ_out_t; 
 
+
+// Convert cell_ID + offset into the read address in memory 
+ typedef struct {
+    int vec_ID_addr; 
+    float dist;  // invalid elements are marked as dist=LARGE_NUM
+} PQ_lookup_t; 
+
 // the input & output of L2 priority queue
 typedef struct {
-    int vec_ID;
+    ap_uint<64> vec_ID;
     float dist;
 } result_t; 
 

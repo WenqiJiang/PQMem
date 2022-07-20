@@ -1,6 +1,5 @@
 #pragma once
 
-#include "constants.hpp"
 #include "hierarchical_priority_queue.hpp"
 
 
@@ -20,8 +19,6 @@ void replicate_scanned_entries_per_query_Redirected_sorted_stream(
         }
     }
 }
-
-
 
 void split_single_stream(
     const int query_num, 
@@ -117,8 +114,88 @@ void merge_streams(
     }
 }
 
-void stage6_priority_queue_group_L2_wrapper( 
+template<const int priority_queue_len, const int stream_num>
+void convert_vec_ID_offset_to_addr(
     const int query_num, 
+    hls::stream<int> &s_nlist_vec_ID_start_addr,
+    hls::stream<PQ_out_t> (&s_intermediate_result_with_offset)[stream_num],
+    hls::stream<PQ_lookup_t> (&s_intermediate_result_with_addr)[stream_num]) {
+
+    // init
+    int cell_ID_to_addr[NLIST_MAX];
+#pragma HLS resource variable=cell_ID_to_addr core=RAM_2P_URAM
+    for (int i = 0; i < NLIST_MAX; i++) {
+        cell_ID_to_addr[i] = s_nlist_vec_ID_start_addr.read();
+    }
+    
+    for (int query_id = 0; query_id < query_num; query_id++) {
+        for (int d = 0; d < priority_queue_len; d++) {
+            for (int s = 0; s < stream_num; s++) {
+#pragma HLS pipeline II=1
+                PQ_out_t reg = s_intermediate_result_with_offset[s].read();
+                int start_addr = cell_ID_to_addr[reg.cell_ID];
+                PQ_lookup_t out;
+                out.dist = reg.dist;
+                out.vec_ID_addr = start_addr + reg.offset;
+                s_intermediate_result_with_addr[s].write(out);
+            }
+        }
+    }
+}
+
+template<const int priority_queue_len, const int stream_num>
+void convert_addr_to_vec_ID(
+    const int query_num, 
+    ap_uint<64>* vec_ID_DDR_0,
+    ap_uint<64>* vec_ID_DDR_1,
+    ap_uint<64>* vec_ID_DDR_2,
+    ap_uint<64>* vec_ID_DDR_3,
+    hls::stream<PQ_lookup_t> (&s_intermediate_result_with_addr)[stream_num],
+    hls::stream<result_t> (&s_intermediate_result_with_vec_ID)[stream_num]) {
+
+    for (int query_id = 0; query_id < query_num; query_id++) {
+        for (int d = 0; d < priority_queue_len; d++) {
+
+            /* first partition of the streams belong to DDR 0, and so forth */
+            for (int s = 0; s < PRIORITY_QUEUE_PER_BANK; s++) {
+#pragma HLS pipeline II=1
+                s_id_DDR_0 = s * 4 + 0;
+                s_id_DDR_1 = s * 4 + 1;
+                s_id_DDR_2 = s * 4 + 2;
+                s_id_DDR_3 = s * 4 + 3;
+
+                PQ_lookup_t in_0 = s_intermediate_result_with_addr[s_id_DDR_0].read();
+                PQ_lookup_t in_1 = s_intermediate_result_with_addr[s_id_DDR_1].read();
+                PQ_lookup_t in_2 = s_intermediate_result_with_addr[s_id_DDR_2].read();
+                PQ_lookup_t in_3 = s_intermediate_result_with_addr[s_id_DDR_3].read();
+
+                result_t out_0;
+                result_t out_1;
+                result_t out_2;
+                result_t out_3;
+
+                out_0.vec_ID = vec_ID_DDR_0[in_0.vec_ID_addr];
+                out_1.vec_ID = vec_ID_DDR_1[in_1.vec_ID_addr];
+                out_2.vec_ID = vec_ID_DDR_2[in_2.vec_ID_addr];
+                out_3.vec_ID = vec_ID_DDR_3[in_3.vec_ID_addr];
+
+                out_0.dist = in_0.dist;
+                out_1.dist = in_1.dist;
+                out_2.dist = in_2.dist;
+                out_3.dist = in_3.dist;
+
+                s_intermediate_result_with_vec_ID[s_id_DDR_0].write(out_0);
+                s_intermediate_result_with_vec_ID[s_id_DDR_1].write(out_1);
+                s_intermediate_result_with_vec_ID[s_id_DDR_2].write(out_2);
+                s_intermediate_result_with_vec_ID[s_id_DDR_3].write(out_3);
+            }
+        }
+    }
+}
+
+void hierarchical_priority_queue( 
+    const int query_num, 
+    hls::stream<int> &s_nlist_vec_ID_start_addr,
     hls::stream<int> &s_scanned_entries_per_query_Priority_queue,
     hls::stream<PQ_out_t> (&s_input)[ADC_PE_NUM], 
     ap_uint<64>* vec_ID_DDR_0,
@@ -130,6 +207,7 @@ void stage6_priority_queue_group_L2_wrapper(
     Hardcode number of memory channels as 4
 
     Input: 
+        the table mapping cell ID to its start address of the array of vec_IDs (s_nprobe_vec_ID_start_addr)
         the number of outputs per compute PE (s_scanned_entries_per_query_Priority_queue)
         the compute PE's result (s_input)
 
@@ -159,12 +237,12 @@ void stage6_priority_queue_group_L2_wrapper(
 #pragma HLS array_partition variable=s_intermediate_result_with_offset complete
 // #pragma HLS RESOURCE variable=s_intermediate_result_with_offset core=FIFO_SRL
 
-    hls::stream<PQ_out_t> s_intermediate_result_with_offset_per_channel[DDR_BANK_NUM];
-#pragma HLS stream variable=s_intermediate_result_with_offset depth=8
-#pragma HLS array_partition variable=s_intermediate_result_with_offset complete
+    hls::stream<PQ_lookup_t> s_intermediate_result_with_addr[PRIORITY_QUEUE_NUM_L1];
+#pragma HLS stream variable=s_intermediate_result_with_addr depth=8
+#pragma HLS array_partition variable=s_intermediate_result_with_addr complete
 // #pragma HLS RESOURCE variable=s_intermediate_result_with_offset core=FIFO_SRL
 
-    hls::stream<result_t> s_intermediate_result_with_vec_ID[DDR_BANK_NUM];
+    hls::stream<result_t> s_intermediate_result_with_vec_ID[PRIORITY_QUEUE_NUM_L1];
 #pragma HLS stream variable=s_intermediate_result_with_vec_ID depth=8
 #pragma HLS array_partition variable=s_intermediate_result_with_vec_ID complete
 // #pragma HLS RESOURCE variable=s_intermediate_result_with_vec_ID core=FIFO_SRL
@@ -198,22 +276,27 @@ void stage6_priority_queue_group_L2_wrapper(
             s_intermediate_result_with_offset[i]);
     }
 
-    // TODO: merge per channel results
-    for (int c = 0; c < DDR_BANK_NUM; c++) {
-#pragma HLS UNROLL
-        merge_results_per_channel();
-    merge_streams<TOPK, PRIORITY_QUEUE_NUM_L1>(
-        query_num, intermediate_result, s_merged_intermediate_result);
-    }
-    // TODO: lookup vecIDs
-    lookup_vec_ID(vec_ID_DDR_0, );
-    lookup_vec_ID(vec_ID_DDR_1, );
-    lookup_vec_ID(vec_ID_DDR_2, );
-    lookup_vec_ID(vec_ID_DDR_3, );
+    // cell_ID + offset -> vec_ID address
+    convert_vec_ID_offset_to_addr<PRIORITY_QUEUE_LEN_L1, PRIORITY_QUEUE_NUM_L1>(
+        query_num, 
+        s_nlist_vec_ID_start_addr,
+        s_intermediate_result_with_offset,
+        s_intermediate_result_with_addr);
 
+    // retrieve vec_ID from DDR
+    convert_addr_to_vec_ID<PRIORITY_QUEUE_LEN_L1, PRIORITY_QUEUE_NUM_L1>(
+        query_num, 
+        vec_ID_DDR_0,
+        vec_ID_DDR_1,
+        vec_ID_DDR_2,
+        vec_ID_DDR_3,
+        s_intermediate_result_with_addr,
+        s_intermediate_result_with_vec_ID); 
 
-    merge_streams<TOPK, PRIORITY_QUEUE_NUM_L1>(
-        query_num, intermediate_result, s_merged_intermediate_result);
+    merge_streams<PRIORITY_QUEUE_LEN_L1, PRIORITY_QUEUE_NUM_L1>(
+        query_num, 
+        s_intermediate_result_with_vec_ID, 
+        s_merged_intermediate_result);
 
     ////////////////////         Priority Queue Level 2          ////////////////////
 
