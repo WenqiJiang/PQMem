@@ -1,5 +1,4 @@
 #pragma once
-#include <ap_int.h>
 
 // Variables that can be configured as a parameters
 #define NLIST 8192
@@ -17,7 +16,7 @@
 #define DDR_BANK_NUM 4
 #define ADC_PE_PER_CHANNEL (512 / 8 / M) // number of vectors per 512-bit AXI interface
 #define ADC_PE_NUM (DDR_BANK_NUM * ADC_PE_PER_CHANNEL)
-#define PRIORITY_QUEUE_NUM_L1 (2 * ADC_PE_PER_CHANNEL)
+#define PRIORITY_QUEUE_NUM_L1 (2 * ADC_PE_NUM)
 #define PRIORITY_QUEUE_PER_BANK (PRIORITY_QUEUE_NUM_L1 / 4)
 #if M == 8 // probablistic approximate priority queue group
     #define PRIORITY_QUEUE_LEN_L1 8

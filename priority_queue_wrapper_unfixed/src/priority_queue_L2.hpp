@@ -19,8 +19,8 @@ class Priority_queue_L2<result_t, queue_size, Collect_smallest> {
 #pragma HLS inline
         }
 
-        template<const int query_num>
         void insert_wrapper(
+            int query_num,
             hls::stream<int> &s_control_iter_num_per_query,
             hls::stream<result_t> &s_input, 
             hls::stream<result_t> &s_output) {
@@ -37,7 +37,7 @@ class Priority_queue_L2<result_t, queue_size, Collect_smallest> {
                 // init
                 for (int i = 0; i < queue_size + 1; i++) {
 #pragma HLS UNROLL
-                    queue[i].vec_ID = -1;
+                    // queue[i].vec_ID = -1;
                     queue[i].dist = LARGE_NUM;
                 }
 
