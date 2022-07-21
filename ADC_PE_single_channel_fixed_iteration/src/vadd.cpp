@@ -5,11 +5,34 @@
 #include "constants.hpp"
 #include "types.hpp"
 
+// template<const int query_num, const int nprobe, const int scanned_entries_every_cell>
+// void send_PE_codes(
+//     hls::stream<PQ_in_t>& s_single_PQ) {
 
+//     PQ_in_t reg;
+//     reg.vec_ID = 100;
+//     for (int i = 0; i < M; i++) {
+//         reg.PQ_code[i] = 0;
+//     }
+
+//     for (int query_id = 0; query_id < query_num; query_id++) {
+
+//         for (int nprobe_id = 0; nprobe_id < nprobe; nprobe_id++) {
+
+//             for (int entry_id = 0; entry_id < scanned_entries_every_cell; entry_id++) {
+// #pragma HLS pipeline II=1
+//                 s_single_PQ.write(reg);
+//             }
+//         }
+//     }
+// }
+
+
+// TODO: for real test, query_num, nprobe are variable, no AXI_entries_every_cell
+//
+//
+template<const int query_num, const int nprobe, const int AXI_entries_every_cell>
 void load_PQ_codes(
-    int query_num, 
-    int nprobe,
-    int compute_iter_per_PE, 
     const ap_uint<512>* DRAM,
     hls::stream<PQ_in_t> (&s_single_PQ)[ADC_PE_PER_CHANNEL]
 ) {
@@ -22,9 +45,9 @@ void load_PQ_codes(
 
         for (int nprobe_id = 0; nprobe_id < nprobe; nprobe_id++) {
 
-            for (int entry_id = 0; entry_id < compute_iter_per_PE; entry_id++) {
+            for (int entry_id = 0; entry_id < AXI_entries_every_cell; entry_id++) {
 #pragma HLS pipeline II=1
-                ap_uint<512> PQ_reg_multi_channel = DRAM[compute_iter_per_PE];
+                ap_uint<512> PQ_reg_multi_channel = DRAM[AXI_entries_every_cell];
 
                 for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
 #pragma HLS unroll
@@ -52,9 +75,8 @@ void load_PQ_codes(
     }
 }
 
+template<const int query_num, const int nprobe>
 void dummy_scanned_entries_every_cell(
-    int query_num, 
-    int nprobe,
     int scanned_entries_every_cell_const,
     hls::stream<int> &s_scanned_entries_every_cell) {
 
@@ -67,9 +89,8 @@ void dummy_scanned_entries_every_cell(
     }
 }
 
+template<const int query_num, const int nprobe>
 void dummy_distance_LUT_sender(
-    int query_num, 
-    int nprobe,
     hls::stream<distance_LUT_parallel_t>& s_distance_LUT) {
 
     distance_LUT_parallel_t dist_row;
@@ -92,9 +113,8 @@ void dummy_distance_LUT_sender(
     
 }
 
+template<const int query_num, const int nprobe>
 void dummy_distance_LUT_consumer(
-    int query_num, 
-    int nprobe,
     hls::stream<distance_LUT_parallel_t>& s_distance_LUT) {
 
     distance_LUT_parallel_t dist_row;
@@ -112,9 +132,8 @@ void dummy_distance_LUT_consumer(
     }
 }
 
+template<const int query_num, const int nprobe, const int scanned_entries_every_cell>
 void PQ_lookup_computation(
-    int query_num, 
-    int nprobe,
     // input streams
     hls::stream<distance_LUT_parallel_t>& s_distance_LUT_in,
     hls::stream<PQ_in_t>& s_single_PQ,
@@ -123,7 +142,7 @@ void PQ_lookup_computation(
     hls::stream<distance_LUT_parallel_t>& s_distance_LUT_out,
     hls::stream<PQ_out_t>& s_single_PQ_result) {
 
-    float distance_LUT[M][LUT_ENTRY_NUM];
+    float distance_LUT[M][256];
 #pragma HLS array_partition variable=distance_LUT dim=1
 #pragma HLS resource variable=distance_LUT core=RAM_1P_BRAM
 
@@ -136,12 +155,15 @@ void PQ_lookup_computation(
             // TODO: for real test, should use tmp_scanned_entries_every_cell instead of template
             //
             //
-            int scanned_entries_every_cell = 
+            int tmp_scanned_entries_every_cell = 
                 s_scanned_entries_every_cell_PQ_lookup_computation.read();
 
+            // TODO: for real test, can use load 2 s_distance_LUT_in per cycle to opt performance 
+            //
+            //
             CP_LUT_LOOP:
             // Stage A: init distance LUT
-            for (int row_id = 0; row_id < LUT_ENTRY_NUM; row_id++) {
+            for (int row_id = 0; row_id < K; row_id++) {
 #pragma HLS pipeline II=1
 // #pragma HLS unroll factor=2
 
@@ -183,10 +205,8 @@ void PQ_lookup_computation(
     }
 }
 
+template<const int query_num, const int nprobe, const int scanned_entries_every_cell>
 void write_result(
-    int query_num, 
-    int nprobe,
-    int compute_iter_per_PE,
     hls::stream<PQ_out_t> (&s_result)[ADC_PE_PER_CHANNEL]
     , ap_uint<96>* results_out) {
     
@@ -196,7 +216,7 @@ void write_result(
 
         for (int nprobe_id = 0; nprobe_id < nprobe; nprobe_id++) {
 
-            for (int entry_id = 0; entry_id < compute_iter_per_PE; entry_id++) {
+            for (int entry_id = 0; entry_id < scanned_entries_every_cell; entry_id++) {
 #pragma HLS pipeline II=1
 
                 for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
@@ -225,10 +245,7 @@ extern "C" {
 
 void vadd(  
     const ap_uint<512>* in, 
-    ap_uint<96>* out,
-    int query_num, 
-    int nprobe,
-    int compute_iter_per_PE
+    ap_uint<96>* out
     )
 {
 #pragma HLS INTERFACE m_axi port=in offset=slave bundle=gmem0
@@ -261,37 +278,28 @@ void vadd(
 #pragma HLS array_partition variable=s_PQ_codes complete
 // #pragma HLS resource variable=s_distance_LUT_out core=FIFO_SRL
 
-// #define COMPUTE_ITER_PER_PE (SCANNED_ENTRIES_PER_CELL / ADC_PE_PER_CHANNEL)
-    load_PQ_codes(
-        query_num, 
-        nprobe,
-        compute_iter_per_PE,
+#define COMPUTE_ITER_PER_PE (SCANNED_ENTRIES_PER_CELL / ADC_PE_PER_CHANNEL)
+    load_PQ_codes<QUERY_NUM, NPROBE, COMPUTE_ITER_PER_PE>(
         in,
         s_PQ_codes);
 
     for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
 #pragma HLS unroll
-    dummy_scanned_entries_every_cell(
-        query_num, 
-        nprobe,
-        compute_iter_per_PE,
+    dummy_scanned_entries_every_cell<QUERY_NUM, NPROBE>(
+        COMPUTE_ITER_PER_PE,
         s_scanned_entries_every_cell[s]);
     }
 
     for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
 #pragma HLS unroll
-    dummy_distance_LUT_sender(
-        query_num, 
-        nprobe,
+    dummy_distance_LUT_sender<QUERY_NUM,  NPROBE>(
         s_distance_LUT_in[s]);
     }
 
 ////////////////////    Core Function Starts     //////////////////// 
     for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
 #pragma HLS unroll
-        PQ_lookup_computation(
-            query_num, 
-            nprobe,
+        PQ_lookup_computation<QUERY_NUM, NPROBE, COMPUTE_ITER_PER_PE>(
             // input streams
             s_distance_LUT_in[s],
             s_PQ_codes[s], 
@@ -305,16 +313,11 @@ void vadd(
 
     for (int s = 0; s < ADC_PE_PER_CHANNEL; s++) {
 #pragma HLS unroll
-    dummy_distance_LUT_consumer(
-        query_num, 
-        nprobe,
+    dummy_distance_LUT_consumer<QUERY_NUM,  NPROBE>(
         s_distance_LUT_out[s]);
     }
 
-    write_result(
-        query_num, 
-        nprobe,
-        compute_iter_per_PE,
+    write_result<QUERY_NUM, NPROBE, COMPUTE_ITER_PER_PE>(
         s_single_PQ_result, 
         out);
 }

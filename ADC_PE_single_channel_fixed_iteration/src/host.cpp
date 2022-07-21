@@ -15,11 +15,7 @@ int main(int argc, char** argv)
     // create buffer using CL_MEM_USE_HOST_PTR to align user buffer to page boundary. It will 
     // ensure that user buffer is used when user create Buffer/Mem object with CL_MEM_USE_HOST_PTR 
 
-    int query_num = 10000;
-    int nprobe = 32;
-    int compute_iter_per_PE = 1000; // per nprobe
-
-    size_t in_bytes = compute_iter_per_PE * 64; 
+    size_t in_bytes = QUERY_NUM * NPROBE * SCANNED_ENTRIES_PER_CELL * M;
     size_t out_bytes = 128;
     std::vector<int ,aligned_allocator<int >> in(in_bytes / sizeof(int));
     std::vector<int ,aligned_allocator<int>> out(out_bytes);
@@ -61,9 +57,6 @@ int main(int argc, char** argv)
 
     OCL_CHECK(err, err = krnl_vector_add.setArg(0, buffer_in));
     OCL_CHECK(err, err = krnl_vector_add.setArg(1, buffer_out));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(2, query_num));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(3, nprobe));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(4, compute_iter_per_PE));
     
     // Copy input data to device global memory
     OCL_CHECK(err, err = q.enqueueMigrateMemObjects({buffer_in},0/* 0 means from host*/));

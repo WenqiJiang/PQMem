@@ -1,9 +1,5 @@
+*run_summary
 host 
-*/__pycache__/*
-*/ext_metadata.json
-*csv
-*xml
-*xrt.run_summary
 build_dir.hw.xilinx_u280_xdma_201920_3
 vivado_pid*
 src/hls_output
