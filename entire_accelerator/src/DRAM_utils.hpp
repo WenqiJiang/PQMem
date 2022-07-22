@@ -16,7 +16,7 @@ void get_cell_addr_and_size(
     hls::stream<int> &s_last_valid_PE_ID,
     hls::stream<int> &s_start_addr_every_cell,
     hls::stream<int> &s_control_iter_num_per_query);
-    
+
 void load_PQ_codes(
     // in init
     int query_num, 
@@ -56,6 +56,15 @@ void load_nlist_num_vecs(
     int* nlist_num_vecs,
     hls::stream<int> &s_nlist_num_vecs);
 
+void load_nlist_vec_ID_start_addr(
+    int nlist,
+    int* nlist_vec_ID_start_addr,
+    hls::stream<int> &s_nlist_vec_ID_start_addr);
+
+void write_result(
+    int query_num,
+    hls::stream<result_t> &output_stream, 
+    ap_uint<64>* out_DRAM);
 
 
 void get_cell_addr_and_size(
@@ -198,7 +207,6 @@ void load_PQ_codes(
         }
     }
 }
-
 
 
 void load_distance_LUT(
@@ -350,5 +358,35 @@ void load_nlist_num_vecs(
     for (int i = 0; i < nlist; i++) {
 #pragma HLS pipeline
         s_nlist_num_vecs.write(nlist_num_vecs[i]);
+    }
+}
+
+
+void load_nlist_vec_ID_start_addr(
+    int nlist,
+    int* nlist_vec_ID_start_addr,
+    hls::stream<int> &s_nlist_vec_ID_start_addr) {
+
+    for (int i = 0; i < nlist; i++) {
+#pragma HLS pipeline
+        s_nlist_vec_ID_start_addr.write(nlist_vec_ID_start_addr[i]);
+    }
+}
+
+void write_result(
+    int query_num,
+    hls::stream<result_t> &output_stream, 
+    ap_uint<64>* out_DRAM) {
+
+    // only write the last iteration
+    for (int i = 0; i < query_num * PRIORITY_QUEUE_LEN_L2; i++) {
+#pragma HLS pipeline II=1
+        result_t raw_output = output_stream.read();
+        ap_uint<64> reg;
+        int vec_ID = raw_output.vec_ID;
+        float dist = raw_output.dist;
+        reg.range(31, 0) = *((ap_uint<32>*) (&vec_ID));
+        reg.range(63, 32) = *((ap_uint<32>*) (&dist));
+        out_DRAM[i] = reg;
     }
 }

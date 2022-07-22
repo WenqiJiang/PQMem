@@ -85,10 +85,10 @@ extern "C" {
 
 void vadd(  
     int* nlist_vec_ID_start_addr,
-    ap_uint<64>* vec_ID_DDR_0,
-    ap_uint<64>* vec_ID_DDR_1,
-    ap_uint<64>* vec_ID_DDR_2,
-    ap_uint<64>* vec_ID_DDR_3,
+    ap_uint<64>* vec_ID_DRAM_0,
+    ap_uint<64>* vec_ID_DRAM_1,
+    ap_uint<64>* vec_ID_DRAM_2,
+    ap_uint<64>* vec_ID_DRAM_3,
     ap_uint<64>* out_DRAM,
     int query_num,
     int nlist,
@@ -96,10 +96,10 @@ void vadd(
     )
 {
 #pragma HLS INTERFACE m_axi port=nlist_vec_ID_start_addr  offset=slave bundle=gmem0
-#pragma HLS INTERFACE m_axi port=vec_ID_DDR_0  offset=slave bundle=gmem1
-#pragma HLS INTERFACE m_axi port=vec_ID_DDR_1  offset=slave bundle=gmem2
-#pragma HLS INTERFACE m_axi port=vec_ID_DDR_2  offset=slave bundle=gmem3
-#pragma HLS INTERFACE m_axi port=vec_ID_DDR_3  offset=slave bundle=gmem4
+#pragma HLS INTERFACE m_axi port=vec_ID_DRAM_0  offset=slave bundle=gmem1
+#pragma HLS INTERFACE m_axi port=vec_ID_DRAM_1  offset=slave bundle=gmem2
+#pragma HLS INTERFACE m_axi port=vec_ID_DRAM_2  offset=slave bundle=gmem3
+#pragma HLS INTERFACE m_axi port=vec_ID_DRAM_3  offset=slave bundle=gmem4
 #pragma HLS INTERFACE m_axi port=out_DRAM  offset=slave bundle=gmem5
 
 #pragma HLS dataflow
@@ -142,10 +142,10 @@ void vadd(
         s_nlist_vec_ID_start_addr,
         s_control_iter_num_per_query[1], 
         s_sorted_PQ_result,
-        vec_ID_DDR_0,
-        vec_ID_DDR_1,
-        vec_ID_DDR_2,
-        vec_ID_DDR_3,
+        vec_ID_DRAM_0,
+        vec_ID_DRAM_1,
+        vec_ID_DRAM_2,
+        vec_ID_DRAM_3,
         s_output);
 
     write_result(

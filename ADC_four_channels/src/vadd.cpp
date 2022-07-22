@@ -14,7 +14,7 @@ void replicate_s_scanned_entries_every_cell(
     hls::stream<int> &s_scanned_entries_every_cell,
     // out
     hls::stream<int> (&s_scanned_entries_every_cell_ADC)[ADC_PE_NUM],
-    hls::stream<int> &s_scanned_entries_every_cell_write_PE) {
+    hls::stream<int> &s_scanned_entries_every_cell_load_PQ_codes) {
 
     for (int query_id = 0; query_id < query_num; query_id++) {
 
@@ -26,35 +26,16 @@ void replicate_s_scanned_entries_every_cell(
 #pragma HLS UNROLL
                 s_scanned_entries_every_cell_ADC[s].write(scanned_entries_every_cell);
             }
-            s_scanned_entries_every_cell_write_PE.write(scanned_entries_every_cell);
+            s_scanned_entries_every_cell_load_PQ_codes.write(scanned_entries_every_cell);
         }
     }
 }
 
-void dummy_distance_LUT_consumer(
-    int query_num, 
-    int nprobe,
-    hls::stream<distance_LUT_parallel_t>& s_distance_LUT) {
-
-    distance_LUT_parallel_t dist_row;
-
-    for (int query_id = 0; query_id < query_num; query_id++) {
-
-        for (int nprobe_id = 0; nprobe_id < nprobe; nprobe_id++) {
-
-            for (int row_id = 0; row_id < LUT_ENTRY_NUM; row_id++) {
-#pragma HLS pipeline II=1
-                dist_row = s_distance_LUT.read();
-            }
-
-        }
-    }
-}
 
 void write_result(
     int query_num, 
     int nprobe,
-    hls::stream<int> &s_scanned_entries_every_cell_write_PE,
+    hls::stream<int> &s_control_iter_num_per_query,
     hls::stream<PQ_out_t> (&s_result)[ADC_PE_NUM], 
     ap_uint<96>* results_out) {
     
@@ -62,17 +43,14 @@ void write_result(
 
     for (int query_id = 0; query_id < query_num; query_id++) {
 
-        for (int nprobe_id = 0; nprobe_id < nprobe; nprobe_id++) {
+        int iter_num_per_query = s_control_iter_num_per_query.read();
 
-            int scanned_entries_every_cell = s_scanned_entries_every_cell_write_PE.read();
-
-            for (int entry_id = 0; entry_id < scanned_entries_every_cell; entry_id++) {
+        for (int entry_id = 0; entry_id < iter_num_per_query; entry_id++) {
 #pragma HLS pipeline II=1
 
-                for (int s = 0; s < ADC_PE_NUM; s++) {
+            for (int s = 0; s < ADC_PE_NUM; s++) {
 #pragma HLS unroll
-                    reg[s] = s_result[s].read();
-                }
+                reg[s] = s_result[s].read();
             }
         }
     }
@@ -139,48 +117,57 @@ void vadd(
         nlist_num_vecs,
         s_nlist_num_vecs);
 
-    hls::stream<int> s_cell_ID;
-#pragma HLS stream variable=s_cell_ID depth=256
+    hls::stream<int> s_cell_ID_get_cell_addr_and_size;
+#pragma HLS stream variable=s_cell_ID_get_cell_addr_and_size depth=256
+    
+    hls::stream<int> s_cell_ID_load_PQ_codes;
+#pragma HLS stream variable=s_cell_ID_load_PQ_codes depth=256
 
     load_cell_ID(
         query_num,
         nprobe,
         cell_ID_DRAM,
-        s_cell_ID);
-
-    hls::stream<PQ_in_t> s_PQ_codes[ADC_PE_NUM];
-#pragma HLS stream variable=s_PQ_codes depth=8
-#pragma HLS array_partition variable=s_PQ_codes complete
-// #pragma HLS resource variable=s_PQ_codes core=FIFO_SRL
+        s_cell_ID_get_cell_addr_and_size,
+        s_cell_ID_load_PQ_codes);
 
     hls::stream<int> s_scanned_entries_every_cell;
 #pragma HLS stream variable=s_scanned_entries_every_cell depth=8
 // #pragma HLS resource variable=s_scanned_entries_every_cell core=FIFO_SRL
     
-    hls::stream<int> s_scanned_entries_every_cell_ADC[ADC_PE_NUM];
-#pragma HLS stream variable=s_scanned_entries_every_cell_ADC depth=8
-#pragma HLS array_partition variable=s_scanned_entries_every_cell_ADC complete
-// #pragma HLS resource variable=s_scanned_entries_every_cell_ADC core=FIFO_SRL
-
-    hls::stream<int> s_scanned_entries_every_cell_write_PE;
-#pragma HLS stream variable=s_scanned_entries_every_cell_write_PE depth=8
-// #pragma HLS resource variable=s_scanned_entries_every_cell_write_PE core=FIFO_SRL
-
-    load_PQ_codes(
+    hls::stream<int> s_last_valid_PE_ID;
+#pragma HLS stream variable=s_last_valid_PE_ID depth=8
+// #pragma HLS resource variable=s_last_valid_PE_ID core=FIFO_SRL
+    
+    hls::stream<int> s_start_addr_every_cell;
+#pragma HLS stream variable=s_start_addr_every_cell depth=8
+// #pragma HLS resource variable=s_start_addr_every_cell core=FIFO_SRL
+    
+    hls::stream<int> s_control_iter_num_per_query;
+#pragma HLS stream variable=s_control_iter_num_per_query depth=8
+// #pragma HLS resource variable=s_control_iter_num_per_query core=FIFO_SRL
+    
+    get_cell_addr_and_size(
         // in init
         query_num, 
         nprobe,
         s_nlist_PQ_codes_start_addr,
         s_nlist_num_vecs,
         // in runtime
-        s_cell_ID,
-        PQ_codes_DRAM_0,
-        PQ_codes_DRAM_1,
-        PQ_codes_DRAM_2,
-        PQ_codes_DRAM_3,
+        s_cell_ID_get_cell_addr_and_size,
         // out
-        s_PQ_codes,
-        s_scanned_entries_every_cell);
+        s_scanned_entries_every_cell,
+        s_last_valid_PE_ID,
+        s_start_addr_every_cell,
+        s_control_iter_num_per_query);
+
+    hls::stream<int> s_scanned_entries_every_cell_ADC[ADC_PE_NUM];
+#pragma HLS stream variable=s_scanned_entries_every_cell_ADC depth=8
+#pragma HLS array_partition variable=s_scanned_entries_every_cell_ADC complete
+// #pragma HLS resource variable=s_scanned_entries_every_cell_ADC core=FIFO_SRL
+
+    hls::stream<int> s_scanned_entries_every_cell_load_PQ_codes;
+#pragma HLS stream variable=s_scanned_entries_every_cell_load_PQ_codes depth=8
+// #pragma HLS resource variable=s_scanned_entries_every_cell_load_PQ_codes core=FIFO_SRL
 
     replicate_s_scanned_entries_every_cell(
         // in
@@ -189,7 +176,28 @@ void vadd(
         s_scanned_entries_every_cell,
         // out
         s_scanned_entries_every_cell_ADC,
-        s_scanned_entries_every_cell_write_PE);
+        s_scanned_entries_every_cell_load_PQ_codes);
+
+    hls::stream<PQ_in_t> s_PQ_codes[ADC_PE_NUM];
+#pragma HLS stream variable=s_PQ_codes depth=8
+#pragma HLS array_partition variable=s_PQ_codes complete
+// #pragma HLS resource variable=s_PQ_codes core=FIFO_SRL
+
+    load_PQ_codes(
+        // in init
+        query_num, 
+        nprobe,
+        // in runtime
+        s_cell_ID_load_PQ_codes,
+        s_scanned_entries_every_cell_load_PQ_codes,
+        s_last_valid_PE_ID,
+        s_start_addr_every_cell,
+        PQ_codes_DRAM_0,
+        PQ_codes_DRAM_1,
+        PQ_codes_DRAM_2,
+        PQ_codes_DRAM_3,
+        // out
+        s_PQ_codes);
 
     hls::stream<PQ_out_t> s_PQ_result[ADC_PE_NUM];
 #pragma HLS stream variable=s_PQ_result depth=8
@@ -230,7 +238,7 @@ void vadd(
     write_result(
         query_num, 
         nprobe,
-        s_scanned_entries_every_cell_write_PE,
+        s_control_iter_num_per_query,
         s_PQ_result, 
         out);
 }
