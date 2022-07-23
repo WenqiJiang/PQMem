@@ -12,9 +12,10 @@ void vadd(
     int query_num, 
     int nlist,
     int nprobe,
-    int* nlist_PQ_codes_start_addr,
-    int* nlist_vec_ID_start_addr,
-    int* nlist_num_vecs,
+    int* nlist_init, // which consists of the following three stuffs:
+                    // int* nlist_PQ_codes_start_addr,
+                    // int* nlist_vec_ID_start_addr,
+                    // int* nlist_num_vecs,
 
     // in runtime (should from network)
     int* cell_ID_DRAM, // query_num * nprobe
@@ -33,10 +34,11 @@ void vadd(
     // out
     ap_uint<64>* out_DRAM)
 {
+// Share the same AXI interface with several control signals (but they are not allowed in same dataflow)
+//    https://docs.xilinx.com/r/en-US/ug1399-vitis-hls/Controlling-AXI4-Burst-Behavior
+
 // in init
-#pragma HLS INTERFACE m_axi port=nlist_PQ_codes_start_addr  offset=slave bundle=gmem0
-#pragma HLS INTERFACE m_axi port=nlist_vec_ID_start_addr  offset=slave bundle=gmem1
-#pragma HLS INTERFACE m_axi port=nlist_num_vecs  offset=slave bundle=gmem2
+#pragma HLS INTERFACE m_axi port=nlist_init  offset=slave bundle=gmem_control
 
 // in runtime (should from network)
 #pragma HLS INTERFACE m_axi port=cell_ID_DRAM offset=slave bundle=gmem3
@@ -62,17 +64,17 @@ void vadd(
     hls::stream<int> s_nlist_PQ_codes_start_addr;
 #pragma HLS stream variable=s_nlist_PQ_codes_start_addr depth=256
 
-    load_nlist_PQ_codes_start_addr(
-        nlist,
-        nlist_PQ_codes_start_addr,
-        s_nlist_PQ_codes_start_addr);
-
+    hls::stream<int> s_nlist_vec_ID_start_addr; // the top 10 numbers
+#pragma HLS stream variable=s_nlist_vec_ID_start_addr depth=256
+    
     hls::stream<int> s_nlist_num_vecs;
 #pragma HLS stream variable=s_nlist_num_vecs depth=256
 
-    load_nlist_num_vecs(
+    load_nlist_init(
         nlist,
-        nlist_num_vecs,
+        nlist_init,
+        s_nlist_PQ_codes_start_addr,
+        s_nlist_vec_ID_start_addr,
         s_nlist_num_vecs);
 
     hls::stream<int> s_cell_ID_get_cell_addr_and_size;
@@ -89,24 +91,25 @@ void vadd(
         s_cell_ID_load_PQ_codes);
 
     hls::stream<int> s_scanned_entries_every_cell;
-#pragma HLS stream variable=s_scanned_entries_every_cell depth=8
+#pragma HLS stream variable=s_scanned_entries_every_cell depth=256
 // #pragma HLS resource variable=s_scanned_entries_every_cell core=FIFO_SRL
     
     hls::stream<int> s_last_valid_PE_ID;
-#pragma HLS stream variable=s_last_valid_PE_ID depth=8
+#pragma HLS stream variable=s_last_valid_PE_ID depth=256
 // #pragma HLS resource variable=s_last_valid_PE_ID core=FIFO_SRL
     
     hls::stream<int> s_start_addr_every_cell;
-#pragma HLS stream variable=s_start_addr_every_cell depth=8
+#pragma HLS stream variable=s_start_addr_every_cell depth=256
 // #pragma HLS resource variable=s_start_addr_every_cell core=FIFO_SRL
     
     hls::stream<int> s_control_iter_num_per_query;
-#pragma HLS stream variable=s_control_iter_num_per_query depth=8
+#pragma HLS stream variable=s_control_iter_num_per_query depth=256
 // #pragma HLS resource variable=s_control_iter_num_per_query core=FIFO_SRL
     
     get_cell_addr_and_size(
         // in init
         query_num, 
+	nlist,
         nprobe,
         s_nlist_PQ_codes_start_addr,
         s_nlist_num_vecs,
@@ -124,7 +127,7 @@ void vadd(
 // #pragma HLS resource variable=s_scanned_entries_every_cell_ADC core=FIFO_SRL
 
     hls::stream<int> s_scanned_entries_every_cell_load_PQ_codes;
-#pragma HLS stream variable=s_scanned_entries_every_cell_load_PQ_codes depth=8
+#pragma HLS stream variable=s_scanned_entries_every_cell_load_PQ_codes depth=256
 // #pragma HLS resource variable=s_scanned_entries_every_cell_load_PQ_codes core=FIFO_SRL
 
     replicate_s_scanned_entries_every_cell(
@@ -195,19 +198,12 @@ void vadd(
 
 ////////////////////     Second Half: K-Selection     ////////////////////
 
-    hls::stream<int> s_nlist_vec_ID_start_addr; // the top 10 numbers
-#pragma HLS stream variable=s_nlist_vec_ID_start_addr depth=2
-
-    load_nlist_vec_ID_start_addr(
-        nlist,
-        nlist_vec_ID_start_addr,
-        s_nlist_vec_ID_start_addr);
-
     hls::stream<result_t> s_output; // the topK numbers
 #pragma HLS stream variable=s_output depth=256
 
     hierarchical_priority_queue( 
         query_num, 
+	nlist,
         s_nlist_vec_ID_start_addr,
         s_control_iter_num_per_query, 
         s_PQ_result,

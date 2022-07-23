@@ -17,10 +17,10 @@ int main(int argc, char** argv)
 
 
     // in init
-    int query_num = 10000;
-    int nlist = 65536;
-    int nprobe = 32;
-    int entries_per_cell = 1000;
+    size_t query_num = 10000;
+    size_t nlist = 65536;
+    size_t nprobe = 32;
+    size_t entries_per_cell = 1000;
     size_t nlist_PQ_codes_start_addr_bytes = nlist * sizeof(int);
     size_t nlist_vec_ID_start_addr_bytes = nlist * sizeof(int);
     size_t nlist_num_vecs_bytes = nlist * sizeof(int);
@@ -116,9 +116,9 @@ int main(int argc, char** argv)
 
 
     // in init
-    OCL_CHECK(err, err = krnl_vector_add.setArg(0, query_num));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(1, nlist));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(2, nprobe));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(0, int(query_num)));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(1, int(nlist)));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(2, int(nprobe)));
     OCL_CHECK(err, err = krnl_vector_add.setArg(3, buffer_nlist_PQ_codes_start_addr));
     OCL_CHECK(err, err = krnl_vector_add.setArg(4, buffer_in_nlist_vec_ID_start_addr));
     OCL_CHECK(err, err = krnl_vector_add.setArg(5, buffer_nlist_num_vecs));

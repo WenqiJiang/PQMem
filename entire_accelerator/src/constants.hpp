@@ -19,13 +19,13 @@
 #define PRIORITY_QUEUE_NUM_L1 (2 * ADC_PE_NUM)
 #define PRIORITY_QUEUE_PER_BANK (PRIORITY_QUEUE_NUM_L1 / 4)
 #if M == 8 // probablistic approximate priority queue group
-    #define PRIORITY_QUEUE_LEN_L1 8
+    #define PRIORITY_QUEUE_LEN_L1 10
 #elif M == 16
-    #define PRIORITY_QUEUE_LEN_L1 11
+    #define PRIORITY_QUEUE_LEN_L1 15
 #elif M == 32
-    #define PRIORITY_QUEUE_LEN_L1 17
+    #define PRIORITY_QUEUE_LEN_L1 23
 #elif M == 16
-    #define PRIORITY_QUEUE_LEN_L1 26
+    #define PRIORITY_QUEUE_LEN_L1 38
 #endif
 #define PRIORITY_QUEUE_LEN_L2 TOPK
 #define LARGE_NUM 9999999999

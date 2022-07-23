@@ -43,6 +43,7 @@ void merge_streams(
 template<const int priority_queue_len, const int stream_num>
 void convert_vec_ID_offset_to_addr(
     const int query_num, 
+    int nlist,
     hls::stream<int> &s_nlist_vec_ID_start_addr,
     hls::stream<PQ_out_t> (&s_intermediate_result_with_offset)[stream_num],
     hls::stream<PQ_lookup_t> (&s_intermediate_result_with_addr)[stream_num]);
@@ -184,6 +185,7 @@ void merge_streams(
 template<const int priority_queue_len, const int stream_num>
 void convert_vec_ID_offset_to_addr(
     const int query_num, 
+    int nlist,
     hls::stream<int> &s_nlist_vec_ID_start_addr,
     hls::stream<PQ_out_t> (&s_intermediate_result_with_offset)[stream_num],
     hls::stream<PQ_lookup_t> (&s_intermediate_result_with_addr)[stream_num]) {
@@ -191,7 +193,7 @@ void convert_vec_ID_offset_to_addr(
     // init
     int cell_ID_to_addr[NLIST_MAX];
 #pragma HLS resource variable=cell_ID_to_addr core=RAM_2P_URAM
-    for (int i = 0; i < NLIST_MAX; i++) {
+    for (int i = 0; i < nlist; i++) {
         cell_ID_to_addr[i] = s_nlist_vec_ID_start_addr.read();
     }
     
@@ -262,6 +264,7 @@ void convert_addr_to_vec_ID(
 
 void hierarchical_priority_queue( 
     const int query_num, 
+    int nlist,
     hls::stream<int> &s_nlist_vec_ID_start_addr,
     hls::stream<int> &s_scanned_entries_per_query_Priority_queue,
     hls::stream<PQ_out_t> (&s_input)[ADC_PE_NUM], 
@@ -346,6 +349,7 @@ void hierarchical_priority_queue(
     // cell_ID + offset -> vec_ID address
     convert_vec_ID_offset_to_addr<PRIORITY_QUEUE_LEN_L1, PRIORITY_QUEUE_NUM_L1>(
         query_num, 
+	    nlist,
         s_nlist_vec_ID_start_addr,
         s_intermediate_result_with_offset,
         s_intermediate_result_with_addr);

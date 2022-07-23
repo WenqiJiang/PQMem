@@ -10,7 +10,7 @@ For M = 32, ADC L = 131 cycles, LUT init = 256 cycles
 
 Real performance (summary.csv):
 
-2278.61 sec
+2278.61 ms (Same)
 
 ## Implication
 

@@ -1,7 +1,7 @@
 .PHONY: help
 
 # e.g., 
-# make all TARGET=hw PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1 > out 2>&1
+# time make all TARGET=hw PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1 > out 2>&1
 
 help::
         $(ECHO) "Makefile Usage:"

@@ -139,6 +139,7 @@ void vadd(
 
     hierarchical_priority_queue( 
         query_num, 
+        nlist,
         s_nlist_vec_ID_start_addr,
         s_control_iter_num_per_query[1], 
         s_sorted_PQ_result,

@@ -6,6 +6,7 @@
 void get_cell_addr_and_size(
     // in init
     int query_num, 
+    int nlist,
     int nprobe,
     hls::stream<int> &s_nlist_PQ_codes_start_addr,
     hls::stream<int> &s_nlist_num_vecs,
@@ -46,6 +47,13 @@ void load_cell_ID(
     hls::stream<int>& s_cell_ID_get_cell_addr_and_size,
     hls::stream<int>& s_cell_ID_load_PQ_codes);
 
+void load_nlist_init(
+    int* nlist_init,
+    hls::stream<int> &s_nlist_PQ_codes_start_addr,
+    hls::stream<int> &s_nlist_vec_ID_start_addr,
+    hls::stream<int> &s_nlist_num_vecs);
+
+
 void load_nlist_PQ_codes_start_addr(
     int nlist,
     int* nlist_PQ_codes_start_addr,
@@ -70,6 +78,7 @@ void write_result(
 void get_cell_addr_and_size(
     // in init
     int query_num, 
+    int nlist,
     int nprobe,
     hls::stream<int> &s_nlist_PQ_codes_start_addr,
     hls::stream<int> &s_nlist_num_vecs,
@@ -89,7 +98,7 @@ void get_cell_addr_and_size(
 #pragma HLS resource variable=cell_ID_to_addr core=RAM_2P_URAM
     int cell_ID_to_num_vecs[NLIST_MAX]; // number of vectors per cell
 #pragma HLS resource variable=cell_ID_to_num_vecs core=RAM_2P_URAM
-    for (int i = 0; i < NLIST_MAX; i++) {
+    for (int i = 0; i < nlist; i++) {
         cell_ID_to_addr[i] = s_nlist_PQ_codes_start_addr.read();
 	    cell_ID_to_num_vecs[i] = s_nlist_num_vecs.read();
     }
@@ -373,6 +382,37 @@ void load_nlist_vec_ID_start_addr(
     }
 }
 
+void load_nlist_init(
+    int nlist,
+    int* nlist_init,
+    hls::stream<int> &s_nlist_PQ_codes_start_addr,
+    hls::stream<int> &s_nlist_vec_ID_start_addr,
+    hls::stream<int> &s_nlist_num_vecs) {
+
+    // nlist_init = three of the following 
+    // int* nlist_PQ_codes_start_addr,
+    // int* nlist_vec_ID_start_addr,
+    // int* nlist_num_vecs,
+
+    int offset_nlist_PQ_codes_start_addr = 0;
+    int offset_nlist_vec_ID_start_addr = nlist;
+    int offset_nlist_num_vecs = 2 * nlist; 
+
+    for (int i = 0; i < nlist; i++) {
+#pragma HLS pipeline
+        s_nlist_PQ_codes_start_addr.write(nlist_init[i + offset_nlist_PQ_codes_start_addr]);
+    }
+    for (int i = 0; i < nlist; i++) {
+#pragma HLS pipeline
+        s_nlist_vec_ID_start_addr.write(nlist_init[i + offset_nlist_vec_ID_start_addr]);
+    }
+    for (int i = 0; i < nlist; i++) {
+#pragma HLS pipeline
+        s_nlist_num_vecs.write(nlist_init[i + offset_nlist_num_vecs]);
+    }
+
+}
+
 void write_result(
     int query_num,
     hls::stream<result_t> &output_stream, 
@@ -390,3 +430,5 @@ void write_result(
         out_DRAM[i] = reg;
     }
 }
+
+

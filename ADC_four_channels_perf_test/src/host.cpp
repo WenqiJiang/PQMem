@@ -24,8 +24,8 @@ int main(int argc, char** argv)
 
     size_t nlist_PQ_codes_start_addr_bytes = nlist * sizeof(int);
     size_t nlist_num_vecs_bytes = nlist * sizeof(int);
-    size_t cell_ID_DRAM_bytes = query_num * nprobe * sizeof(int);
-    size_t LUT_DRAM_bytes = query_num * nprobe * LUT_ENTRY_NUM * M * sizeof(float);
+    // size_t cell_ID_DRAM_bytes = query_num * nprobe * sizeof(int);
+    // size_t LUT_DRAM_bytes = query_num * nprobe * LUT_ENTRY_NUM * M * sizeof(float);
     size_t PQ_codes_DRAM_0_bytes = nlist * entries_per_cell * 64;
     size_t PQ_codes_DRAM_1_bytes = nlist * entries_per_cell * 64;
     size_t PQ_codes_DRAM_2_bytes = nlist * entries_per_cell * 64;
@@ -40,8 +40,8 @@ int main(int argc, char** argv)
 
     std::vector<int ,aligned_allocator<int>> nlist_PQ_codes_start_addr(nlist_PQ_codes_start_addr_bytes / long(sizeof(int)));
     std::vector<int ,aligned_allocator<int>> nlist_num_vecs(nlist_num_vecs_bytes / long(sizeof(int)));
-    std::vector<int ,aligned_allocator<int>> cell_ID_DRAM(cell_ID_DRAM_bytes / long(sizeof(int)));
-    std::vector<int ,aligned_allocator<int>> LUT_DRAM(LUT_DRAM_bytes / long(sizeof(int)));
+    // std::vector<int ,aligned_allocator<int>> cell_ID_DRAM(cell_ID_DRAM_bytes / long(sizeof(int)));
+    // std::vector<int ,aligned_allocator<int>> LUT_DRAM(LUT_DRAM_bytes / long(sizeof(int)));
     std::vector<int ,aligned_allocator<int>> PQ_codes_DRAM_0(PQ_codes_DRAM_0_bytes / long(sizeof(int)));
     std::vector<int ,aligned_allocator<int>> PQ_codes_DRAM_1(PQ_codes_DRAM_1_bytes / long(sizeof(int)));
     std::vector<int ,aligned_allocator<int>> PQ_codes_DRAM_2(PQ_codes_DRAM_2_bytes / long(sizeof(int)));
@@ -90,10 +90,10 @@ int main(int argc, char** argv)
             nlist_PQ_codes_start_addr_bytes, nlist_PQ_codes_start_addr.data(), &err));
     OCL_CHECK(err, cl::Buffer buffer_nlist_num_vecs   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
             nlist_num_vecs_bytes, nlist_num_vecs.data(), &err));
-    OCL_CHECK(err, cl::Buffer buffer_cell_ID_DRAM   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
-            cell_ID_DRAM_bytes, cell_ID_DRAM.data(), &err));
-    OCL_CHECK(err, cl::Buffer buffer_LUT_DRAM   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
-            LUT_DRAM_bytes, LUT_DRAM.data(), &err));
+    // OCL_CHECK(err, cl::Buffer buffer_cell_ID_DRAM   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
+    //         cell_ID_DRAM_bytes, cell_ID_DRAM.data(), &err));
+    // OCL_CHECK(err, cl::Buffer buffer_LUT_DRAM   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
+    //         LUT_DRAM_bytes, LUT_DRAM.data(), &err));
     OCL_CHECK(err, cl::Buffer buffer_PQ_codes_DRAM_0   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
             PQ_codes_DRAM_0_bytes, PQ_codes_DRAM_0.data(), &err));
     OCL_CHECK(err, cl::Buffer buffer_PQ_codes_DRAM_1   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
@@ -114,21 +114,21 @@ int main(int argc, char** argv)
     OCL_CHECK(err, err = krnl_vector_add.setArg(3, buffer_nlist_PQ_codes_start_addr));
     OCL_CHECK(err, err = krnl_vector_add.setArg(4, buffer_nlist_num_vecs));
     // in runtime
-    OCL_CHECK(err, err = krnl_vector_add.setArg(5, buffer_cell_ID_DRAM));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(6, buffer_LUT_DRAM));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(7, buffer_PQ_codes_DRAM_0));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(8, buffer_PQ_codes_DRAM_1));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(9, buffer_PQ_codes_DRAM_2));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(10, buffer_PQ_codes_DRAM_3));
+    // OCL_CHECK(err, err = krnl_vector_add.setArg(5, buffer_cell_ID_DRAM));
+    // OCL_CHECK(err, err = krnl_vector_add.setArg(6, buffer_LUT_DRAM));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(5, buffer_PQ_codes_DRAM_0));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(6, buffer_PQ_codes_DRAM_1));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(7, buffer_PQ_codes_DRAM_2));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(8, buffer_PQ_codes_DRAM_3));
     // out
-    OCL_CHECK(err, err = krnl_vector_add.setArg(11, buffer_out));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(9, buffer_out));
     
     // Copy input data to device global memory
     OCL_CHECK(err, err = q.enqueueMigrateMemObjects({
         buffer_nlist_PQ_codes_start_addr,
         buffer_nlist_num_vecs,
-        buffer_cell_ID_DRAM, 
-        buffer_LUT_DRAM, 
+        // buffer_cell_ID_DRAM, 
+        // buffer_LUT_DRAM, 
         buffer_PQ_codes_DRAM_0,
         buffer_PQ_codes_DRAM_1,
         buffer_PQ_codes_DRAM_2,

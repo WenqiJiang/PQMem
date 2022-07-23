@@ -177,6 +177,7 @@ void PQ_lookup_computation(
 
                             // even: load to buffer A
                             for (int col_id = 0; col_id < M; col_id++) {
+#pragma HLS UNROLL
                                 distance_LUT_A[col_id][common_iter] = dist_row.dist[col_id]; 
                             }
                         }
@@ -207,6 +208,7 @@ void PQ_lookup_computation(
                                 out.offset = -1;
                                 out.dist = LARGE_NUM;
                             }
+                            s_single_PQ_result.write(out);
                         }
                     }
                 }
@@ -225,6 +227,7 @@ void PQ_lookup_computation(
 
                             // odd: load to buffer B
                             for (int col_id = 0; col_id < M; col_id++) {
+#pragma HLS UNROLL
                                 distance_LUT_B[col_id][common_iter] = dist_row.dist[col_id]; 
                             }
                         }
