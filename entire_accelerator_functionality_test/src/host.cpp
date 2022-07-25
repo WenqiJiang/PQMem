@@ -18,14 +18,14 @@ int main(int argc, char** argv)
     std::cout << "Allocating memory...\n";
 
     // in init
-    size_t query_num = 100;
-    size_t nlist = 262144;
+    size_t query_num = 1000;
+    size_t nlist = 65536;
     size_t nprobe = 32;
-    size_t entries_per_cell = 100;
+    size_t entries_per_cell = 1000;
     size_t nlist_init_bytes = 3 * nlist * sizeof(int);
     std::vector<int ,aligned_allocator<int >> nlist_init(nlist_init_bytes / sizeof(int));
 
-    int compute_iter_per_cell = 100;
+    int compute_iter_per_cell = 1000;
     for (int i = 0; i < nlist; i++) {
         // int* nlist_PQ_codes_start_addr,
 	    nlist_init[i] = 0;
