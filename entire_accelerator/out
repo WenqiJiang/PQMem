@@ -331,3 +331,38 @@ WARNING: [VPL-1] The use of profile options turned on trace, which uses a memory
 [12:47:51] Phase 3.3.2 Flow Legalize Slice Clusters
 [12:47:51] Phase 3.3.3 Slice Area Swap
 [12:48:25] Phase 3.3.3.1 Slice Area Swap Initial
+[12:51:47] Phase 3.4 Place Remaining
+[12:51:47] Phase 3.5 Re-assign LUT pins
+[12:56:17] Phase 3.6 Pipeline Register Optimization
+[12:56:50] Phase 3.7 Fast Optimization
+[12:59:05] Phase 4 Post Placement Optimization and Clean-Up
+[12:59:05] Phase 4.1 Post Commit Optimization
+[13:02:27] Phase 4.1.1 Post Placement Optimization
+[13:03:34] Phase 4.1.1.1 BUFG Insertion
+[13:03:34] Phase 1 Physical Synthesis Initialization
+[13:08:37] Phase 4.1.1.2 BUFG Replication
+[13:09:45] Phase 4.1.1.3 Post Placement Timing Optimization
+[13:15:56] Phase 4.1.1.4 Replication
+[13:19:18] Phase 4.2 Post Placement Cleanup
+[13:19:18] Phase 4.3 Placer Reporting
+[13:19:18] Phase 4.3.1 Print Estimated Congestion
+[13:19:18] Phase 4.4 Final Placement Cleanup
+[13:49:50] Finished 4th of 6 tasks (FPGA logic placement). Elapsed time: 01h 58m 40s 
+
+[13:49:50] Starting logic routing..
+[13:52:05] Phase 1 Build RT Design
+[13:57:10] Phase 2 Router Initialization
+[13:57:10] Phase 2.1 Fix Topology Constraints
+[13:57:44] Phase 2.2 Pre Route Cleanup
+[13:58:51] Phase 2.3 Global Clock Net Routing
+[13:59:59] Phase 2.4 Update Timing
+[14:05:02] Phase 2.5 Update Timing for Bus Skew
+[14:05:02] Phase 2.5.1 Update Timing
+[14:07:51] Phase 3 Initial Routing
+[14:07:51] Phase 3.1 Global Routing
+[14:07:51] Phase 3.1.1 Global Routing
+[14:07:51] Phase 3.1.1.1 Build GR Node Graph
+[14:10:39] Phase 3.1.1.2 Run Global Routing
+[14:44:26] Phase 4 Initial Routing Verification
+[14:45:34] Phase 5 Rip-up And Reroute
+[14:45:34] Phase 5.1 Global Iteration 0

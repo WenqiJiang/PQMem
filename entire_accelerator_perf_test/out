@@ -218,3 +218,59 @@ WARNING: [VPL-1] The use of profile options turned on trace, which uses a memory
 
 [12:39:16] Starting logic optimization..
 [12:40:26] Phase 1 Generate And Synthesize MIG Cores
+[12:51:39] Phase 2 Generate And Synthesize Debug Cores
+[12:55:46] Phase 3 Retarget
+[12:56:22] Phase 4 Constant propagation
+[12:56:22] Phase 5 Sweep
+[12:57:32] Phase 6 BUFG optimization
+[12:57:32] Phase 7 Shift Register Optimization
+[12:57:32] Phase 8 Post Processing Netlist
+[13:04:38] Finished 3rd of 6 tasks (FPGA logic optimization). Elapsed time: 00h 25m 22s 
+
+[13:04:38] Starting logic placement..
+[13:06:24] Phase 1 Placer Initialization
+[13:06:24] Phase 1.1 Placer Initialization Netlist Sorting
+[13:12:18] Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device
+[13:14:40] Phase 1.3 Build Placer Netlist Model
+[13:18:49] Phase 1.4 Constrain Clocks/Macros
+[13:19:24] Phase 2 Global Placement
+[13:19:24] Phase 2.1 Floorplanning
+[13:22:56] Phase 2.1.1 Partition Driven Placement
+[13:22:56] Phase 2.1.1.1 PBP: Partition Driven Placement
+[13:26:30] Phase 2.1.1.2 PBP: Clock Region Placement
+[13:33:04] Phase 2.1.1.3 PBP: Compute Congestion
+[13:33:04] Phase 2.1.1.4 PBP: UpdateTiming
+[13:33:40] Phase 2.1.1.5 PBP: Add part constraints
+[13:33:40] Phase 2.2 Physical Synthesis After Floorplan
+[13:34:52] Phase 2.3 Update Timing before SLR Path Opt
+[13:34:52] Phase 2.4 Post-Processing in Floorplanning
+[13:34:52] Phase 2.5 Global Placement Core
+[13:47:28] Phase 2.5.1 Physical Synthesis In Placer
+[13:57:35] Phase 3 Detail Placement
+[13:57:35] Phase 3.1 Commit Multi Column Macros
+[13:58:11] Phase 3.2 Commit Most Macros & LUTRAMs
+[14:04:41] Phase 3.3 Small Shape DP
+[14:04:41] Phase 3.3.1 Small Shape Clustering
+[14:05:17] Phase 3.3.2 Flow Legalize Slice Clusters
+[14:05:17] Phase 3.3.3 Slice Area Swap
+[14:05:17] Phase 3.3.3.1 Slice Area Swap Initial
+[14:09:26] Phase 3.4 Place Remaining
+[14:09:26] Phase 3.5 Re-assign LUT pins
+[14:14:11] Phase 3.6 Pipeline Register Optimization
+[14:14:11] Phase 3.7 Fast Optimization
+[14:15:59] Phase 4 Post Placement Optimization and Clean-Up
+[14:15:59] Phase 4.1 Post Commit Optimization
+[14:18:57] Phase 4.1.1 Post Placement Optimization
+[14:20:08] Phase 4.1.1.1 BUFG Insertion
+[14:20:08] Phase 1 Physical Synthesis Initialization
+[14:26:04] Phase 4.1.1.2 BUFG Replication
+[14:26:40] Phase 4.1.1.3 Post Placement Timing Optimization
+[14:32:02] Phase 4.1.1.4 Replication
+[14:34:24] Phase 4.2 Post Placement Cleanup
+[14:34:24] Phase 4.3 Placer Reporting
+[14:34:24] Phase 4.3.1 Print Estimated Congestion
+[14:35:00] Phase 4.4 Final Placement Cleanup
+[15:02:57] Finished 4th of 6 tasks (FPGA logic placement). Elapsed time: 01h 58m 18s 
+
+[15:02:57] Starting logic routing..
+[15:05:56] Phase 1 Build RT Design
