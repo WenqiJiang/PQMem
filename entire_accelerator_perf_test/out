@@ -1,0 +1,220 @@
+mkdir -p ./xclbin
+v++ -g -t hw --platform xilinx_u250_gen3x16_xdma_4_1_202210_1 --save-temps --config connectivity.cfg -l --temp_dir ./_x.hw -o xclbin/vadd.hw.xclbin xclbin/vadd.hw.xo # 
+Option Map File Used: '/tools/Xilinx/Vitis/2022.1/data/vitis/vpp/optMap.xml'
+INFO: [v++ 82-4274] Default memory will be used for trace offload
+
+****** v++ v2022.1 (64-bit)
+  **** SW Build 3524075 on 2022-04-13-17:42:45
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+INFO: [v++ 60-1306] Additional information associated with this v++ link can be found at:
+	Reports: /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/reports/link
+	Log files: /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/logs/link
+Running Dispatch Server on port: 36659
+INFO: [v++ 60-1548] Creating build summary session with primary output /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/xclbin/vadd.hw.xclbin.link_summary, at Mon Jul 25 11:04:40 2022
+INFO: [v++ 60-1316] Initiating connection to rulecheck server, at Mon Jul 25 11:04:40 2022
+INFO: [v++ 60-1315] Creating rulecheck session with output '/pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/reports/link/v++_link_vadd.hw_guidance.html', at Mon Jul 25 11:04:42 2022
+INFO: [v++ 60-895]   Target platform: /opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/xilinx_u250_gen3x16_xdma_4_1_202210_1.xpfm
+INFO: [v++ 60-1578]   This platform contains Xilinx Shell Archive '/opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/hw/hw.xsa'
+INFO: [v++ 74-78] Compiler Version string: 2022.1
+INFO: [v++ 82-4274] Default memory will be used for trace offload
+INFO: [v++ 60-629] Linking for hardware target
+INFO: [v++ 60-423]   Target device: xilinx_u250_gen3x16_xdma_4_1_202210_1
+INFO: [v++ 60-1332] Run 'run_link' status: Not started
+INFO: [v++ 60-1443] [11:04:54] Run run_link: Step system_link: Started
+INFO: [v++ 60-1453] Command Line: system_link --xo /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/xclbin/vadd.hw.xo -keep --config /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int/syslinkConfig.ini --xpfm /opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/xilinx_u250_gen3x16_xdma_4_1_202210_1.xpfm --target hw --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/run_link
+INFO: [SYSTEM_LINK 60-1316] Initiating connection to rulecheck server, at Mon Jul 25 11:04:56 2022
+INFO: [SYSTEM_LINK 82-70] Extracting xo v3 file /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/xclbin/vadd.hw.xo
+INFO: [SYSTEM_LINK 82-53] Creating IP database /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml
+INFO: [SYSTEM_LINK 82-38] [11:05:05] build_xd_ip_db started: /tools/Xilinx/Vitis/2022.1/bin/build_xd_ip_db -ip_search 0  -sds-pf /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/hw.hpfm -clkid 0 -ip /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/iprepo/xilinx_com_hls_vadd_1_0,vadd -o /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml
+INFO: [SYSTEM_LINK 82-37] [11:05:13] build_xd_ip_db finished successfully
+Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2268.258 ; gain = 0.000 ; free physical = 269386 ; free virtual = 354435
+INFO: [SYSTEM_LINK 82-51] Create system connectivity graph
+INFO: [SYSTEM_LINK 82-102] Applying explicit connections to the system connectivity graph: /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml
+INFO: [SYSTEM_LINK 82-38] [11:05:13] cfgen started: /tools/Xilinx/Vitis/2022.1/bin/cfgen  -nk vadd:1:vadd_1 -sp vadd_1.nlist_init:DDR[0] -sp vadd_1.PQ_codes_DRAM_0:DDR[0] -sp vadd_1.PQ_codes_DRAM_1:DDR[1] -sp vadd_1.PQ_codes_DRAM_2:DDR[2] -sp vadd_1.PQ_codes_DRAM_3:DDR[3] -sp vadd_1.vec_ID_DRAM_0:DDR[0] -sp vadd_1.vec_ID_DRAM_1:DDR[1] -sp vadd_1.vec_ID_DRAM_2:DDR[2] -sp vadd_1.vec_ID_DRAM_3:DDR[3] -sp vadd_1.out_DRAM:DDR[3] -dmclkid 0 -r /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml -o /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml
+INFO: [CFGEN 83-0] Kernel Specs: 
+INFO: [CFGEN 83-0]   kernel: vadd, num: 1  {vadd_1}
+INFO: [CFGEN 83-0] Port Specs: 
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: nlist_init, sptag: DDR[0]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: PQ_codes_DRAM_0, sptag: DDR[0]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: PQ_codes_DRAM_1, sptag: DDR[1]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: PQ_codes_DRAM_2, sptag: DDR[2]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: PQ_codes_DRAM_3, sptag: DDR[3]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: vec_ID_DRAM_0, sptag: DDR[0]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: vec_ID_DRAM_1, sptag: DDR[1]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: vec_ID_DRAM_2, sptag: DDR[2]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: vec_ID_DRAM_3, sptag: DDR[3]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: out_DRAM, sptag: DDR[3]
+INFO: [SYSTEM_LINK 82-37] [11:05:18] cfgen finished successfully
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 2268.258 ; gain = 0.000 ; free physical = 269287 ; free virtual = 354337
+INFO: [SYSTEM_LINK 82-52] Create top-level block diagram
+INFO: [SYSTEM_LINK 82-38] [11:05:18] cf2bd started: /tools/Xilinx/Vitis/2022.1/bin/cf2bd  --linux --trace_buffer 1024 --input_file /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml --ip_db /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml --cf_name dr --working_dir /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/_sysl/.xsd --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int --target_bd ulp.bd
+INFO: [CF2BD 82-31] Launching cf2xd: cf2xd -linux -trace-buffer 1024 -i /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml -r /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml -o dr.xml
+INFO: [CF2BD 82-28] cf2xd finished successfully
+INFO: [CF2BD 82-31] Launching cf_xsd: cf_xsd -disable-address-gen -bd ulp.bd -dn dr -dp /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/sys_link/_sysl/.xsd
+INFO: [CF2BD 82-28] cf_xsd finished successfully
+INFO: [SYSTEM_LINK 82-37] [11:05:22] cf2bd finished successfully
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2268.258 ; gain = 0.000 ; free physical = 269172 ; free virtual = 354226
+INFO: [v++ 60-1441] [11:05:22] Run run_link: Step system_link: Completed
+Time (s): cpu = 00:00:21 ; elapsed = 00:00:28 . Memory (MB): peak = 2199.480 ; gain = 0.000 ; free physical = 269214 ; free virtual = 354268
+INFO: [v++ 60-1443] [11:05:22] Run run_link: Step cf2sw: Started
+INFO: [v++ 60-1453] Command Line: cf2sw -sdsl /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int/sdsl.dat -rtd /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int/cf2sw.rtd -nofilter /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int/cf2sw_full.rtd -xclbin /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int/xclbin_orig.xml -o /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int/xclbin_orig.1.xml
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/run_link
+INFO: [v++ 60-1441] [11:05:27] Run run_link: Step cf2sw: Completed
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 2199.480 ; gain = 0.000 ; free physical = 269198 ; free virtual = 354253
+INFO: [v++ 60-1443] [11:05:27] Run run_link: Step rtd2_system_diagram: Started
+INFO: [v++ 60-1453] Command Line: rtd2SystemDiagram
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/run_link
+INFO: [v++ 60-1441] [11:05:28] Run run_link: Step rtd2_system_diagram: Completed
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.61 . Memory (MB): peak = 2199.480 ; gain = 0.000 ; free physical = 269168 ; free virtual = 354224
+INFO: [v++ 60-1443] [11:05:28] Run run_link: Step vpl: Started
+INFO: [v++ 60-1453] Command Line: vpl -t hw -f xilinx_u250_gen3x16_xdma_4_1_202210_1 -g --kernel_frequency 140 --remote_ip_cache /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/.ipcache -s --trace_memory DDR[0] --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int --log_dir /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/logs/link --report_dir /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/reports/link --config /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int/vplConfig.ini -k /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int/kernel_info.dat --webtalk_flag Vitis --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link --no-info --iprepo /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int/xo/ip_repo/xilinx_com_hls_vadd_1_0 --messageDb /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/run_link/vpl.pb /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int/dr.bd.tcl
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/run_link
+
+****** vpl v2022.1 (64-bit)
+  **** SW Build 3524075 on 2022-04-13-17:42:45
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+INFO: [VPL 60-839] Read in kernel information from file '/pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/int/kernel_info.dat'.
+INFO: [VPL 74-78] Compiler Version string: 2022.1
+INFO: [VPL 60-423]   Target device: xilinx_u250_gen3x16_xdma_4_1_202210_1
+INFO: [VPL 82-4282] Memory used for trace offload is DDR 0 
+INFO: [VPL 60-1032] Extracting hardware platform to /pub/scratch/wenqi/PQMem/entire_accelerator_perf_test/_x.hw/link/vivado/vpl/.local/hw_platform
+[11:05:45] Run vpl: Step create_project: Started
+Creating Vivado project.
+[11:05:49] Run vpl: Step create_project: Completed
+[11:05:49] Run vpl: Step create_bd: Started
+[11:06:32] Run vpl: Step create_bd: Completed
+[11:06:32] Run vpl: Step update_bd: Started
+WARNING: [VPL-1] The use of profile options turned on trace, which uses a memory resource in one SLR; however kernels or compute units could potentially be located in multiple SLRs. This may impact timing due to SLR crossing. To improve timing, please consider implementing trace memory in every SLRs used via the linker option: --profile.trace_memory <memory>:<SLR>. SLRs present on the design : SLR0 SLR1 SLR2 SLR3
+[11:06:42] Run vpl: Step update_bd: Completed
+[11:06:42] Run vpl: Step generate_target: Started
+[11:07:59] Run vpl: Step generate_target: RUNNING...
+[11:09:19] Run vpl: Step generate_target: RUNNING...
+[11:10:02] Run vpl: Step generate_target: Completed
+[11:10:02] Run vpl: Step config_hw_runs: Started
+[11:11:29] Run vpl: Step config_hw_runs: RUNNING...
+[11:12:55] Run vpl: Step config_hw_runs: RUNNING...
+[11:14:16] Run vpl: Step config_hw_runs: RUNNING...
+[11:14:20] Run vpl: Step config_hw_runs: Completed
+[11:14:20] Run vpl: Step synth: Started
+[11:15:29] Block-level synthesis in progress, 0 of 258 jobs complete, 8 jobs running.
+[11:16:02] Block-level synthesis in progress, 3 of 258 jobs complete, 5 jobs running.
+[11:16:37] Block-level synthesis in progress, 8 of 258 jobs complete, 7 jobs running.
+[11:17:10] Block-level synthesis in progress, 10 of 258 jobs complete, 6 jobs running.
+[11:17:44] Block-level synthesis in progress, 15 of 258 jobs complete, 6 jobs running.
+[11:18:17] Block-level synthesis in progress, 17 of 258 jobs complete, 7 jobs running.
+[11:18:52] Block-level synthesis in progress, 24 of 258 jobs complete, 7 jobs running.
+[11:19:25] Block-level synthesis in progress, 31 of 258 jobs complete, 6 jobs running.
+[11:20:00] Block-level synthesis in progress, 36 of 258 jobs complete, 5 jobs running.
+[11:20:33] Block-level synthesis in progress, 45 of 258 jobs complete, 6 jobs running.
+[11:21:08] Block-level synthesis in progress, 45 of 258 jobs complete, 8 jobs running.
+[11:21:41] Block-level synthesis in progress, 50 of 258 jobs complete, 5 jobs running.
+[11:22:16] Block-level synthesis in progress, 54 of 258 jobs complete, 7 jobs running.
+[11:22:50] Block-level synthesis in progress, 56 of 258 jobs complete, 8 jobs running.
+[11:23:24] Block-level synthesis in progress, 63 of 258 jobs complete, 7 jobs running.
+[11:23:58] Block-level synthesis in progress, 71 of 258 jobs complete, 6 jobs running.
+[11:24:33] Block-level synthesis in progress, 77 of 258 jobs complete, 6 jobs running.
+[11:25:07] Block-level synthesis in progress, 84 of 258 jobs complete, 7 jobs running.
+[11:25:42] Block-level synthesis in progress, 90 of 258 jobs complete, 7 jobs running.
+[11:26:15] Block-level synthesis in progress, 100 of 258 jobs complete, 6 jobs running.
+[11:26:50] Block-level synthesis in progress, 107 of 258 jobs complete, 6 jobs running.
+[11:27:24] Block-level synthesis in progress, 116 of 258 jobs complete, 6 jobs running.
+[11:27:59] Block-level synthesis in progress, 123 of 258 jobs complete, 7 jobs running.
+[11:28:33] Block-level synthesis in progress, 132 of 258 jobs complete, 5 jobs running.
+[11:29:08] Block-level synthesis in progress, 135 of 258 jobs complete, 8 jobs running.
+[11:29:42] Block-level synthesis in progress, 139 of 258 jobs complete, 6 jobs running.
+[11:30:17] Block-level synthesis in progress, 142 of 258 jobs complete, 8 jobs running.
+[11:30:51] Block-level synthesis in progress, 148 of 258 jobs complete, 4 jobs running.
+[11:31:25] Block-level synthesis in progress, 152 of 258 jobs complete, 7 jobs running.
+[11:31:59] Block-level synthesis in progress, 157 of 258 jobs complete, 6 jobs running.
+[11:32:34] Block-level synthesis in progress, 163 of 258 jobs complete, 7 jobs running.
+[11:33:09] Block-level synthesis in progress, 167 of 258 jobs complete, 6 jobs running.
+[11:33:44] Block-level synthesis in progress, 171 of 258 jobs complete, 7 jobs running.
+[11:34:18] Block-level synthesis in progress, 173 of 258 jobs complete, 7 jobs running.
+[11:34:53] Block-level synthesis in progress, 178 of 258 jobs complete, 7 jobs running.
+[11:35:28] Block-level synthesis in progress, 179 of 258 jobs complete, 8 jobs running.
+[11:36:03] Block-level synthesis in progress, 184 of 258 jobs complete, 7 jobs running.
+[11:36:39] Block-level synthesis in progress, 188 of 258 jobs complete, 6 jobs running.
+[11:37:14] Block-level synthesis in progress, 198 of 258 jobs complete, 6 jobs running.
+[11:37:49] Block-level synthesis in progress, 204 of 258 jobs complete, 8 jobs running.
+[11:38:24] Block-level synthesis in progress, 209 of 258 jobs complete, 6 jobs running.
+[11:38:59] Block-level synthesis in progress, 216 of 258 jobs complete, 7 jobs running.
+[11:39:34] Block-level synthesis in progress, 218 of 258 jobs complete, 8 jobs running.
+[11:40:09] Block-level synthesis in progress, 222 of 258 jobs complete, 6 jobs running.
+[11:40:45] Block-level synthesis in progress, 226 of 258 jobs complete, 6 jobs running.
+[11:41:20] Block-level synthesis in progress, 228 of 258 jobs complete, 6 jobs running.
+[11:41:55] Block-level synthesis in progress, 236 of 258 jobs complete, 4 jobs running.
+[11:42:30] Block-level synthesis in progress, 246 of 258 jobs complete, 4 jobs running.
+[11:43:05] Block-level synthesis in progress, 253 of 258 jobs complete, 5 jobs running.
+[11:43:40] Block-level synthesis in progress, 256 of 258 jobs complete, 2 jobs running.
+[11:44:15] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:44:51] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:45:27] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:46:02] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:46:37] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:47:13] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:47:48] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:48:24] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:48:59] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:49:35] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:50:10] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:50:46] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:51:20] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:51:56] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:52:31] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:53:07] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:53:42] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:54:18] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:54:53] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:55:28] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:56:03] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:56:39] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:57:14] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:57:50] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:58:25] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:59:01] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[11:59:36] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:00:12] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:00:47] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:01:23] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:01:58] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:02:35] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:03:09] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:03:45] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:04:20] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:04:55] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:05:30] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:06:07] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:06:42] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:07:18] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:07:53] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:08:29] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:09:04] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:09:40] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:10:15] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:10:51] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:11:26] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:12:02] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:12:37] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:13:13] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:13:48] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:14:24] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:14:59] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:15:35] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:16:10] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:16:46] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:17:22] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:17:58] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:18:33] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:19:09] Block-level synthesis in progress, 257 of 258 jobs complete, 1 job running.
+[12:19:43] Top-level synthesis in progress.
+[12:20:17] Top-level synthesis in progress.
+[12:20:52] Top-level synthesis in progress.
+[12:21:43] Run vpl: Step synth: Completed
+[12:21:43] Run vpl: Step impl: Started
+[12:39:16] Finished 2nd of 6 tasks (FPGA linking synthesized kernels to platform). Elapsed time: 01h 33m 46s 
+
+[12:39:16] Starting logic optimization..
+[12:40:26] Phase 1 Generate And Synthesize MIG Cores

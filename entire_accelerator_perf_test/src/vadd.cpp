@@ -5,6 +5,43 @@
 #include "hierarchical_priority_queue.hpp"
 #include "types.hpp"
 
+
+void dummy_send_cell_ID(
+    int query_num,
+    int nprobe,
+    hls::stream<int>& s_cell_ID_get_cell_addr_and_size,
+    hls::stream<int>& s_cell_ID_load_PQ_codes) {
+        
+    for (int query_id = 0; query_id < query_num; query_id++) {
+        for (int nprobe_id = 0; nprobe_id < nprobe; nprobe_id++) {
+            int cell_ID = nprobe_id;
+            s_cell_ID_get_cell_addr_and_size.write(cell_ID); 
+            s_cell_ID_load_PQ_codes.write(cell_ID); 
+        }
+    }
+}
+
+
+
+void dummy_send_distance_LUT(
+    int query_num, 
+    int nprobe,
+    hls::stream<distance_LUT_parallel_t>& s_distance_LUT) {
+
+    for (int query_id = 0; query_id < query_num; query_id++) {
+
+        for (int nprobe_id = 0; nprobe_id < nprobe; nprobe_id++) {
+
+            distance_LUT_parallel_t dist_row;
+            // one 512-bit entry = one PQ code row (16 floats x 4 byte = 64 bytes)
+            for (int row_id = 0; row_id < LUT_ENTRY_NUM; row_id++) {
+#pragma HLS pipeline II=1
+                s_distance_LUT.write(dist_row);
+            }
+        }
+    }
+}
+
 extern "C" {
 
 void vadd(  
@@ -18,8 +55,8 @@ void vadd(
                     // int* nlist_num_vecs,
 
     // in runtime (should from network)
-    int* cell_ID_DRAM, // query_num * nprobe
-    ap_uint<512>* LUT_DRAM, // query_num * nprobe * 256 * M
+    // int* cell_ID_DRAM, // query_num * nprobe
+    // ap_uint<512>* LUT_DRAM, // query_num * nprobe * 256 * M
 
     // in runtime (should from DRAM)
     const ap_uint<512>* PQ_codes_DRAM_0,
@@ -41,8 +78,8 @@ void vadd(
 #pragma HLS INTERFACE m_axi port=nlist_init  offset=slave bundle=gmem_control
 
 // in runtime (should from network)
-#pragma HLS INTERFACE m_axi port=cell_ID_DRAM offset=slave bundle=gmem3
-#pragma HLS INTERFACE m_axi port=LUT_DRAM offset=slave bundle=gmem4
+// #pragma HLS INTERFACE m_axi port=cell_ID_DRAM offset=slave bundle=gmem3
+// #pragma HLS INTERFACE m_axi port=LUT_DRAM offset=slave bundle=gmem4
 
 // in runtime (should from DRAM)
 #pragma HLS INTERFACE m_axi port=PQ_codes_DRAM_0 offset=slave bundle=gmem5
@@ -83,12 +120,18 @@ void vadd(
     hls::stream<int> s_cell_ID_load_PQ_codes;
 #pragma HLS stream variable=s_cell_ID_load_PQ_codes depth=256
 
-    load_cell_ID(
+    dummy_send_cell_ID(
         query_num,
         nprobe,
-        cell_ID_DRAM,
         s_cell_ID_get_cell_addr_and_size,
         s_cell_ID_load_PQ_codes);
+
+    // load_cell_ID(
+    //     query_num,
+    //     nprobe,
+    //     cell_ID_DRAM,
+    //     s_cell_ID_get_cell_addr_and_size,
+    //     s_cell_ID_load_PQ_codes);
 
     hls::stream<int> s_scanned_entries_every_cell;
 #pragma HLS stream variable=s_scanned_entries_every_cell depth=256
@@ -171,11 +214,16 @@ void vadd(
 // #pragma HLS resource variable=s_distance_LUT core=FIFO_SRL
 
     // systolic array of distance LUT communication
-    load_distance_LUT(
+    dummy_send_distance_LUT(
         query_num, 
         nprobe,
-        LUT_DRAM, // query_num * nprobe * 256 * M
         s_distance_LUT[0]);
+
+    // load_distance_LUT(
+    //     query_num, 
+    //     nprobe,
+    //     LUT_DRAM, // query_num * nprobe * 256 * M
+    //     s_distance_LUT[0]);
 
     for (int s = 0; s < ADC_PE_NUM; s++) {
 #pragma HLS unroll

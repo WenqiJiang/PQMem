@@ -5,6 +5,54 @@
 #include "hierarchical_priority_queue.hpp"
 #include "types.hpp"
 
+void dummy_s_nlist_vec_ID_start_addr_consumer(
+    int nlist,
+    hls::stream<int> &s_nlist_vec_ID_start_addr) {
+
+    for (int i = 0; i < nlist; i++) {
+#pragma HLS pipeline
+        s_nlist_vec_ID_start_addr.read();
+    }
+}
+
+
+void write_result(
+    int query_num, 
+    int nprobe,
+    hls::stream<int> &s_control_iter_num_per_query,
+    hls::stream<PQ_out_t> (&s_result)[ADC_PE_NUM], 
+    ap_uint<96>* results_out) {
+    
+    PQ_out_t reg[ADC_PE_PER_CHANNEL];
+#pragma HLS array_partition variable=reg complete
+
+    for (int query_id = 0; query_id < query_num; query_id++) {
+
+        int iter_num_per_query = s_control_iter_num_per_query.read();
+
+        for (int entry_id = 0; entry_id < iter_num_per_query; entry_id++) {
+#pragma HLS pipeline II=1
+
+            for (int s = 0; s < ADC_PE_NUM; s++) {
+#pragma HLS unroll
+                reg[s] = s_result[s].read();
+            }
+        }
+    }
+
+    // only write the last value to out
+    int cell_ID = reg[0].cell_ID;
+    int offset = reg[0].offset;
+    float dist = reg[0].dist;
+    ap_uint<32> cell_ID_ap = *((ap_uint<32>*) (&cell_ID));
+    ap_uint<32> offset_ap = *((ap_uint<32>*) (&offset));
+    ap_uint<32> dist_ap = *((ap_uint<32>*) (&dist));
+    results_out[0].range(31, 0) = cell_ID_ap;
+    results_out[0].range(63, 32) = offset_ap;
+    results_out[0].range(96, 64) = dist_ap;
+}
+
+
 extern "C" {
 
 void vadd(  
@@ -32,7 +80,7 @@ void vadd(
     ap_uint<64>* vec_ID_DRAM_3,
 
     // out
-    ap_uint<64>* out_DRAM)
+    ap_uint<96>* out_DRAM)
 {
 // Share the same AXI interface with several control signals (but they are not allowed in same dataflow)
 //    https://docs.xilinx.com/r/en-US/ug1399-vitis-hls/Controlling-AXI4-Burst-Behavior
@@ -196,27 +244,19 @@ void vadd(
         nprobe,
         s_distance_LUT[ADC_PE_NUM]);
 
-////////////////////     Second Half: K-Selection     ////////////////////
-
-    hls::stream<result_t> s_output; // the topK numbers
-#pragma HLS stream variable=s_output depth=256
-
-    hierarchical_priority_queue( 
-        query_num, 
+    dummy_s_nlist_vec_ID_start_addr_consumer(
         nlist,
-        s_nlist_vec_ID_start_addr,
-        s_control_iter_num_per_query, 
-        s_PQ_result,
-        vec_ID_DRAM_0,
-        vec_ID_DRAM_1,
-        vec_ID_DRAM_2,
-        vec_ID_DRAM_3,
-        s_output);
+        s_nlist_vec_ID_start_addr);
 
     write_result(
         query_num, 
-        s_output, 
+        nprobe,
+        s_control_iter_num_per_query,
+        s_PQ_result, 
         out_DRAM);
+
+////////////////////     Second Half: K-Selection     ////////////////////
+
 }
 
 }

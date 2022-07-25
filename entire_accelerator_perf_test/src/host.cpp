@@ -36,10 +36,10 @@ int main(int argc, char** argv)
     }
 
     // in runtime (should from network)
-    size_t cell_ID_DRAM_bytes = query_num * nprobe * sizeof(int);
-    size_t LUT_DRAM_bytes = query_num * nprobe * LUT_ENTRY_NUM * M * sizeof(float);
-    std::vector<int ,aligned_allocator<int >> cell_ID_DRAM(cell_ID_DRAM_bytes / sizeof(int));
-    std::vector<int ,aligned_allocator<int >> LUT_DRAM(LUT_DRAM_bytes / sizeof(int));
+//     size_t cell_ID_DRAM_bytes = query_num * nprobe * sizeof(int);
+//     size_t LUT_DRAM_bytes = query_num * nprobe * LUT_ENTRY_NUM * M * sizeof(float);
+//     std::vector<int ,aligned_allocator<int >> cell_ID_DRAM(cell_ID_DRAM_bytes / sizeof(int));
+//     std::vector<int ,aligned_allocator<int >> LUT_DRAM(LUT_DRAM_bytes / sizeof(int));
 
     // in runtime (should from DRAM)
     size_t PQ_codes_DRAM_bytes = nlist * entries_per_cell * 64;
@@ -90,10 +90,10 @@ int main(int argc, char** argv)
             nlist_init_bytes, nlist_init.data(), &err));
 
 	// in runtime (should from network)
-    OCL_CHECK(err, cl::Buffer buffer_cell_ID_DRAM   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
-            cell_ID_DRAM_bytes, cell_ID_DRAM.data(), &err));
-    OCL_CHECK(err, cl::Buffer buffer_LUT_DRAM   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
-            LUT_DRAM_bytes, LUT_DRAM.data(), &err));
+//     OCL_CHECK(err, cl::Buffer buffer_cell_ID_DRAM   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
+//             cell_ID_DRAM_bytes, cell_ID_DRAM.data(), &err));
+//     OCL_CHECK(err, cl::Buffer buffer_LUT_DRAM   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
+//             LUT_DRAM_bytes, LUT_DRAM.data(), &err));
 
     // in runtime (should from DRAM)
     OCL_CHECK(err, cl::Buffer buffer_PQ_codes_DRAM_0   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
@@ -125,21 +125,21 @@ int main(int argc, char** argv)
     OCL_CHECK(err, err = krnl_vector_add.setArg(3, buffer_nlist_init));
 
     // in runtime (should from network)
-    OCL_CHECK(err, err = krnl_vector_add.setArg(4, buffer_cell_ID_DRAM));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(5, buffer_LUT_DRAM));
+//     OCL_CHECK(err, err = krnl_vector_add.setArg(4, buffer_cell_ID_DRAM));
+//     OCL_CHECK(err, err = krnl_vector_add.setArg(5, buffer_LUT_DRAM));
 
     // in runtime (should from DRAM)
-    OCL_CHECK(err, err = krnl_vector_add.setArg(6, buffer_PQ_codes_DRAM_0));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(7, buffer_PQ_codes_DRAM_1));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(8, buffer_PQ_codes_DRAM_2));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(9, buffer_PQ_codes_DRAM_3));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(10, buffer_in_vec_ID_DRAM_0));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(11, buffer_in_vec_ID_DRAM_1));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(12, buffer_in_vec_ID_DRAM_2));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(13, buffer_in_vec_ID_DRAM_3));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(4, buffer_PQ_codes_DRAM_0));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(5, buffer_PQ_codes_DRAM_1));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(6, buffer_PQ_codes_DRAM_2));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(7, buffer_PQ_codes_DRAM_3));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(8, buffer_in_vec_ID_DRAM_0));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(9, buffer_in_vec_ID_DRAM_1));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(10, buffer_in_vec_ID_DRAM_2));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(11, buffer_in_vec_ID_DRAM_3));
 
     // out
-    OCL_CHECK(err, err = krnl_vector_add.setArg(14, buffer_out));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(12, buffer_out));
 
 
 
@@ -148,8 +148,8 @@ int main(int argc, char** argv)
         // in init
         buffer_nlist_init,
         // in runtime (should from network)
-        buffer_cell_ID_DRAM, 
-        buffer_LUT_DRAM, 
+        // buffer_cell_ID_DRAM, 
+        // buffer_LUT_DRAM, 
         // in runtime (should from DRAM)
         buffer_PQ_codes_DRAM_0,
         buffer_PQ_codes_DRAM_1,
