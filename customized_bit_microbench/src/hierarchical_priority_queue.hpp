@@ -43,6 +43,7 @@ void merge_streams(
 template<const int priority_queue_len, const int stream_num>
 void convert_vec_ID_offset_to_addr(
     const int query_num, 
+    int nlist,
     hls::stream<int> &s_nlist_vec_ID_start_addr,
     hls::stream<PQ_out_t> (&s_intermediate_result_with_offset)[stream_num],
     hls::stream<PQ_lookup_t> (&s_intermediate_result_with_addr)[stream_num]);
@@ -224,39 +225,50 @@ void convert_addr_to_vec_ID(
     for (int query_id = 0; query_id < query_num; query_id++) {
         for (int d = 0; d < priority_queue_len; d++) {
 
+            /* for the customized bit-rate version, the offset is the offset of
+                 per entry for all 4 memory (2048-bit as a unit).
+               The first 3 channels store the same amount of vector, while the 4th
+                 might store slightly more */
             /* first partition of the streams belong to DRAM 0, and so forth */
-            for (int s = 0; s < PRIORITY_QUEUE_PER_BANK; s++) {
-#pragma HLS UNROLL
-                int s_id_DRAM_0 = s + 0 * PRIORITY_QUEUE_PER_BANK;
-                int s_id_DRAM_1 = s + 1 * PRIORITY_QUEUE_PER_BANK;
-                int s_id_DRAM_2 = s + 2 * PRIORITY_QUEUE_PER_BANK;
-                int s_id_DRAM_3 = s + 3 * PRIORITY_QUEUE_PER_BANK;
+            for (int s = 0; s < PRIORITY_QUEUE_PER_FIRST_THREE_BANK; s++) {
+#pragma HLS pipeline II=1
+                int s_id_DRAM_0 = s + 0 * PRIORITY_QUEUE_PER_FIRST_THREE_BANK;
+                int s_id_DRAM_1 = s + 1 * PRIORITY_QUEUE_PER_FIRST_THREE_BANK;
+                int s_id_DRAM_2 = s + 2 * PRIORITY_QUEUE_PER_FIRST_THREE_BANK;
 
                 PQ_lookup_t in_0 = s_intermediate_result_with_addr[s_id_DRAM_0].read();
                 PQ_lookup_t in_1 = s_intermediate_result_with_addr[s_id_DRAM_1].read();
                 PQ_lookup_t in_2 = s_intermediate_result_with_addr[s_id_DRAM_2].read();
-                PQ_lookup_t in_3 = s_intermediate_result_with_addr[s_id_DRAM_3].read();
 
                 result_t out_0;
                 result_t out_1;
                 result_t out_2;
-                result_t out_3;
 
                 out_0.vec_ID = vec_ID_DRAM_0[in_0.vec_ID_addr];
                 out_1.vec_ID = vec_ID_DRAM_1[in_1.vec_ID_addr];
                 out_2.vec_ID = vec_ID_DRAM_2[in_2.vec_ID_addr];
-                out_3.vec_ID = vec_ID_DRAM_3[in_3.vec_ID_addr];
 
                 out_0.dist = in_0.dist;
                 out_1.dist = in_1.dist;
                 out_2.dist = in_2.dist;
-                out_3.dist = in_3.dist;
 
                 s_intermediate_result_with_vec_ID[s_id_DRAM_0].write(out_0);
                 s_intermediate_result_with_vec_ID[s_id_DRAM_1].write(out_1);
                 s_intermediate_result_with_vec_ID[s_id_DRAM_2].write(out_2);
+            }
+            for (int s = 0; s < PRIORITY_QUEUE_LAST_BANK; s++) {
+#pragma HLS pipeline II=1
+                int s_id_DRAM_3 = s + 3 * PRIORITY_QUEUE_PER_FIRST_THREE_BANK;
+
+                PQ_lookup_t in_3 = s_intermediate_result_with_addr[s_id_DRAM_3].read();
+
+                result_t out_3;
+                out_3.vec_ID = vec_ID_DRAM_3[in_3.vec_ID_addr];
+                out_3.dist = in_3.dist;
+
                 s_intermediate_result_with_vec_ID[s_id_DRAM_3].write(out_3);
             }
+
         }
     }
 }
@@ -348,7 +360,7 @@ void hierarchical_priority_queue(
     // cell_ID + offset -> vec_ID address
     convert_vec_ID_offset_to_addr<PRIORITY_QUEUE_LEN_L1, PRIORITY_QUEUE_NUM_L1>(
         query_num, 
-        nlist,
+	    nlist,
         s_nlist_vec_ID_start_addr,
         s_intermediate_result_with_offset,
         s_intermediate_result_with_addr);

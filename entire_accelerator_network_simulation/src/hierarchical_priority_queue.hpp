@@ -228,10 +228,10 @@ void convert_addr_to_vec_ID(
             /* first partition of the streams belong to DRAM 0, and so forth */
             for (int s = 0; s < PRIORITY_QUEUE_PER_BANK; s++) {
 #pragma HLS pipeline II=1
-                int s_id_DRAM_0 = s * 4 + 0;
-                int s_id_DRAM_1 = s * 4 + 1;
-                int s_id_DRAM_2 = s * 4 + 2;
-                int s_id_DRAM_3 = s * 4 + 3;
+                int s_id_DRAM_0 = s + 0 * PRIORITY_QUEUE_PER_BANK;
+                int s_id_DRAM_1 = s + 1 * PRIORITY_QUEUE_PER_BANK;
+                int s_id_DRAM_2 = s + 2 * PRIORITY_QUEUE_PER_BANK;
+                int s_id_DRAM_3 = s + 3 * PRIORITY_QUEUE_PER_BANK;
 
                 PQ_lookup_t in_0 = s_intermediate_result_with_addr[s_id_DRAM_0].read();
                 PQ_lookup_t in_1 = s_intermediate_result_with_addr[s_id_DRAM_1].read();

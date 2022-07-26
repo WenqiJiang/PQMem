@@ -39,7 +39,7 @@ void write_result(
     hls::stream<PQ_out_t> (&s_result)[ADC_PE_NUM], 
     ap_uint<96>* results_out) {
     
-    PQ_out_t reg[ADC_PE_PER_CHANNEL];
+    PQ_out_t reg[ADC_PE_NUM];
 #pragma HLS array_partition variable=reg complete
 
     for (int query_id = 0; query_id < query_num; query_id++) {
