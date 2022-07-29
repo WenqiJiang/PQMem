@@ -1,3 +1,5 @@
+#include <chrono>
+
 #include "host.hpp"
 
 #include "constants.hpp"
@@ -18,24 +20,24 @@ int main(int argc, char** argv)
     std::cout << "Allocating memory...\n";
 
     // in init
-    size_t query_num = 1000;
+    size_t query_num = 10000;
     size_t db_vec_num = 1000 * 1000; // evaluate on million-scale dataset
     size_t nlist = 1;
     size_t nprobe = 1;
-    size_t num_vec_per_row = 2048 / (M * NBITS);
+    size_t num_vec_per_row = ADC_PE_NUM;
     size_t entries_num = db_vec_num % num_vec_per_row == 0? 
-        db_vec_num / num_vec_per_row: db_vec_num / num_vec_per_row + 1; // in 512-byte
+        db_vec_num / num_vec_per_row: db_vec_num / num_vec_per_row + 1; // in 512-bit x 4
 
-    size_t nlist_init_bytes = 3 * nlist * sizeof(int);
+    size_t nlist_init_bytes = 3 * nlist * sizeof(int); 
     std::vector<int ,aligned_allocator<int >> nlist_init(nlist_init_bytes / sizeof(int));
 
     for (int i = 0; i < nlist; i++) {
         // int* nlist_PQ_codes_start_addr,
-	    nlist_init[i] = 0;
+        nlist_init[i] = 0;
         // int* nlist_vec_ID_start_addr,
         nlist_init[nlist + i] = 0;
         // int* nlist_num_vecs,
-        nlist_init[2 * nlist + i] = db_vec_num;
+        nlist_init[2 * nlist + i] = db_vec_num; 
     }
 
     // in runtime (should from network)
@@ -46,7 +48,7 @@ int main(int argc, char** argv)
 
     // in runtime (should from DRAM)
     size_t PQ_codes_DRAM_bytes = nlist * entries_num * 64;
-    size_t vec_ID_DRAM_bytes = nlist * entries_num * sizeof(int);
+    size_t vec_ID_DRAM_bytes = nlist * (db_vec_num) * sizeof(int); // should be db_vec_num /4 (last channel slightly more)
     std::vector<int ,aligned_allocator<int >> PQ_codes_DRAM_0(PQ_codes_DRAM_bytes / sizeof(int));
     std::vector<int ,aligned_allocator<int >> PQ_codes_DRAM_1(PQ_codes_DRAM_bytes / sizeof(int));
     std::vector<int ,aligned_allocator<int >> PQ_codes_DRAM_2(PQ_codes_DRAM_bytes / sizeof(int));
@@ -88,6 +90,7 @@ int main(int argc, char** argv)
 	// ------------------------------------------------------------------	
 	
 
+    std::cout << "Finish loading bitstream...\n";
     // in init 
     OCL_CHECK(err, cl::Buffer buffer_nlist_init   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
             nlist_init_bytes, nlist_init.data(), &err));
@@ -120,6 +123,7 @@ int main(int argc, char** argv)
     OCL_CHECK(err, cl::Buffer buffer_out(context,CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, 
             out_bytes, out.data(), &err));
 
+    std::cout << "Finish allocate buffer...\n";
 
     // in init
     OCL_CHECK(err, err = krnl_vector_add.setArg(0, int(query_num)));
@@ -145,7 +149,6 @@ int main(int argc, char** argv)
     OCL_CHECK(err, err = krnl_vector_add.setArg(14, buffer_out));
 
 
-
     // Copy input data to device global memory
     OCL_CHECK(err, err = q.enqueueMigrateMemObjects({
         // in init
@@ -163,12 +166,20 @@ int main(int argc, char** argv)
         buffer_in_vec_ID_DRAM_2, 
         buffer_in_vec_ID_DRAM_3},0/* 0 means from host*/));
 
+    std::cout << "Launching kernel...\n";
     // Launch the Kernel
+    auto start = std::chrono::high_resolution_clock::now();
     OCL_CHECK(err, err = q.enqueueTask(krnl_vector_add));
 
     // Copy Result from Device Global Memory to Host Local Memory
     OCL_CHECK(err, err = q.enqueueMigrateMemObjects({buffer_out},CL_MIGRATE_MEM_OBJECT_HOST));
     q.finish();
+
+    auto end = std::chrono::high_resolution_clock::now();
+    double duration = (std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() / 1000.0);
+
+    std::cout << "Duration: " << duration << " sec" << std::endl; 
+    std::cout << "Throughput: " << float(query_num) * db_vec_num * M * NBITS / 8 / duration / (1024 * 1024 * 1024) << " GB / sec" << std::endl; 
 
 // OPENCL HOST CODE AREA END
 

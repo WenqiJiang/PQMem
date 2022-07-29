@@ -18,14 +18,13 @@ int main(int argc, char** argv)
     std::cout << "Allocating memory...\n";
 
     // in init
-    size_t query_num = 100;
-    size_t nlist = 262144;
+    size_t query_num = 2000;
+    size_t nlist = 65536;
     size_t nprobe = 32;
-    size_t entries_per_cell = 100;
     size_t nlist_init_bytes = 3 * nlist * sizeof(int);
     std::vector<int ,aligned_allocator<int >> nlist_init(nlist_init_bytes / sizeof(int));
 
-    int compute_iter_per_cell = 100;
+    int compute_iter_per_cell = 1000;
     for (int i = 0; i < nlist; i++) {
         // int* nlist_PQ_codes_start_addr,
 	    nlist_init[i] = 0;
@@ -36,14 +35,20 @@ int main(int argc, char** argv)
     }
 
     // in runtime (should from network)
-    size_t cell_ID_DRAM_bytes = query_num * nprobe * sizeof(int);
-    size_t LUT_DRAM_bytes = query_num * nprobe * LUT_ENTRY_NUM * M * sizeof(float);
-    std::vector<int ,aligned_allocator<int >> cell_ID_DRAM(cell_ID_DRAM_bytes / sizeof(int));
-    std::vector<int ,aligned_allocator<int >> LUT_DRAM(LUT_DRAM_bytes / sizeof(int));
+    // 128 is a random padding for network headers
+
+    // in 64-byte 
+    size_t size_header = 1;
+    size_t size_cell_IDs = nprobe * 4 % 64 == 0? nprobe * 4 / 64: nprobe * 4 / 64 + 1;
+    size_t size_LUTs = nprobe * 4 * M * LUT_ENTRY_NUM / 64; // should always be int
+
+    size_t in_DRAM_bytes = query_num * 64 * (size_header + size_cell_IDs + size_LUTs);
+    std::vector<int ,aligned_allocator<int >> in_DRAM(in_DRAM_bytes / sizeof(int));
 
     // in runtime (should from DRAM)
+    size_t entries_per_cell = 1000;
     size_t PQ_codes_DRAM_bytes = nlist * entries_per_cell * 64;
-    size_t vec_ID_DRAM_bytes = nlist * entries_per_cell * sizeof(int);
+    size_t vec_ID_DRAM_bytes = nlist * entries_per_cell * ADC_PE_PER_CHANNEL * sizeof(int);
     std::vector<int ,aligned_allocator<int >> PQ_codes_DRAM_0(PQ_codes_DRAM_bytes / sizeof(int));
     std::vector<int ,aligned_allocator<int >> PQ_codes_DRAM_1(PQ_codes_DRAM_bytes / sizeof(int));
     std::vector<int ,aligned_allocator<int >> PQ_codes_DRAM_2(PQ_codes_DRAM_bytes / sizeof(int));
@@ -54,7 +59,11 @@ int main(int argc, char** argv)
     std::vector<int ,aligned_allocator<int >> vec_ID_DRAM_3(vec_ID_DRAM_bytes / sizeof(int));
     
     // out
-    size_t out_bytes = query_num * 2 * TOPK;
+    // 128 is a random padding for network headers
+    // header = 1 pkt
+    size_t size_results = PRIORITY_QUEUE_LEN_L2 * 64 % 512 == 0?
+        1 + PRIORITY_QUEUE_LEN_L2 * 64 / 512 : 1 + PRIORITY_QUEUE_LEN_L2 * 64 / 512 + 1;
+    size_t out_bytes = query_num * 64 * size_results;
     std::vector<int ,aligned_allocator<int>> out(out_bytes);
 
 // OPENCL HOST CODE AREA START
@@ -90,10 +99,8 @@ int main(int argc, char** argv)
             nlist_init_bytes, nlist_init.data(), &err));
 
 	// in runtime (should from network)
-    OCL_CHECK(err, cl::Buffer buffer_cell_ID_DRAM   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
-            cell_ID_DRAM_bytes, cell_ID_DRAM.data(), &err));
-    OCL_CHECK(err, cl::Buffer buffer_LUT_DRAM   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
-            LUT_DRAM_bytes, LUT_DRAM.data(), &err));
+    OCL_CHECK(err, cl::Buffer buffer_in_DRAM   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
+            in_DRAM_bytes, in_DRAM.data(), &err));
 
     // in runtime (should from DRAM)
     OCL_CHECK(err, cl::Buffer buffer_PQ_codes_DRAM_0   (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
@@ -125,21 +132,20 @@ int main(int argc, char** argv)
     OCL_CHECK(err, err = krnl_vector_add.setArg(3, buffer_nlist_init));
 
     // in runtime (should from network)
-    OCL_CHECK(err, err = krnl_vector_add.setArg(4, buffer_cell_ID_DRAM));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(5, buffer_LUT_DRAM));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(4, buffer_in_DRAM));
 
     // in runtime (should from DRAM)
-    OCL_CHECK(err, err = krnl_vector_add.setArg(6, buffer_PQ_codes_DRAM_0));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(7, buffer_PQ_codes_DRAM_1));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(8, buffer_PQ_codes_DRAM_2));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(9, buffer_PQ_codes_DRAM_3));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(10, buffer_in_vec_ID_DRAM_0));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(11, buffer_in_vec_ID_DRAM_1));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(12, buffer_in_vec_ID_DRAM_2));
-    OCL_CHECK(err, err = krnl_vector_add.setArg(13, buffer_in_vec_ID_DRAM_3));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(5, buffer_PQ_codes_DRAM_0));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(6, buffer_PQ_codes_DRAM_1));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(7, buffer_PQ_codes_DRAM_2));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(8, buffer_PQ_codes_DRAM_3));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(9, buffer_in_vec_ID_DRAM_0));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(10, buffer_in_vec_ID_DRAM_1));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(11, buffer_in_vec_ID_DRAM_2));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(12, buffer_in_vec_ID_DRAM_3));
 
     // out
-    OCL_CHECK(err, err = krnl_vector_add.setArg(14, buffer_out));
+    OCL_CHECK(err, err = krnl_vector_add.setArg(13, buffer_out));
 
 
 
@@ -148,8 +154,7 @@ int main(int argc, char** argv)
         // in init
         buffer_nlist_init,
         // in runtime (should from network)
-        buffer_cell_ID_DRAM, 
-        buffer_LUT_DRAM, 
+        buffer_in_DRAM, 
         // in runtime (should from DRAM)
         buffer_PQ_codes_DRAM_0,
         buffer_PQ_codes_DRAM_1,

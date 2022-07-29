@@ -169,15 +169,11 @@ void load_PQ_codes(
                 ap_uint<512> PQ_reg_multi_PE_2 = PQ_codes_DRAM_2[start_addr + entry_id];
                 ap_uint<512> PQ_reg_multi_PE_3 = PQ_codes_DRAM_3[start_addr + entry_id];
 
-                // ap_uint can be up to 4K bits wide
-                // https://docs.xilinx.com/r/en-US/ug1399-vitis-hls/Using-Arbitrary-Precision-Data-Types
-                ap_uint<2048> entire_row;
-                entire_row.range(512 * 1 - 1, 0) = PQ_reg_multi_PE_0;
-                entire_row.range(512 * 2 - 1, 512 * 1) = PQ_reg_multi_PE_1;
-                entire_row.range(512 * 3 - 1, 512 * 2) = PQ_reg_multi_PE_2;
-                entire_row.range(512 * 4 - 1, 512 * 3) = PQ_reg_multi_PE_3;
+                // until bank 0
+                ap_uint<ADC_PE_NUM_UNTIL_BEFORE_BANK_0 * M * NBITS> PQ_reg_bank_0 = 
+                    PQ_reg_multi_PE_0.range(ADC_PE_NUM_UNTIL_BEFORE_BANK_0 * M * NBITS - 1, 0);
 
-                for (int s = 0; s < ADC_PE_NUM; s++) {
+                for (int s = 0; s < ADC_PE_NUM_UNTIL_BEFORE_BANK_0; s++) {
 #pragma HLS unroll
 
                     PQ_in_t PQ_reg;
@@ -189,11 +185,182 @@ void load_PQ_codes(
                     // bit refer: https://github.com/WenqiJiang/FPGA-ANNS/blob/main/integrated_accelerator/entire-node-systolic-computation-without-FIFO-type-assignment-fine-grained-PE-with-queue-group-inlined/src/HBM_interconnections.hpp
                     for (int m = 0; m < M; m++) {
 #pragma HLS unroll
-                        PQ_reg.PQ_code[m] = entire_row.range(
+                        PQ_reg.PQ_code[m] = PQ_reg_bank_0.range(
                             s * M * NBITS + m * NBITS + (NBITS - 1), s * M * NBITS + m * NBITS);
                     }
                     s_PQ_codes[s].write(PQ_reg);
                 }
+
+                // between bank 0 and 1
+#if ADC_PE_NUM_UNTIL_BEFORE_BANK_0 != ADC_PE_NUM_UNTIL_AFTER_BANK_0
+                ap_uint<M * NBITS> PQ_reg_bank_0_1; 
+                PQ_reg_bank_0_1.range(512 - ADC_PE_NUM_UNTIL_BEFORE_BANK_0 * M * NBITS - 1, 0) = 
+                    PQ_reg_multi_PE_0.range(512 - 1, ADC_PE_NUM_UNTIL_BEFORE_BANK_0 * M * NBITS);
+                PQ_reg_bank_0_1.range(M * NBITS - 1, 512 - ADC_PE_NUM_UNTIL_BEFORE_BANK_0 * M * NBITS) = 
+                    PQ_reg_multi_PE_1.range(ADC_PE_NUM_UNTIL_AFTER_BANK_0 * M * NBITS - 512 - 1, 0);
+                {
+                    int s = ADC_PE_NUM_UNTIL_BEFORE_BANK_0;
+                    PQ_in_t PQ_reg;
+                    
+                    PQ_reg.valid = ((entry_id == compute_iter_per_PE - 1) && (s > last_valid_PE_ID))? 0 : 1;
+                    PQ_reg.cell_ID = cell_ID; 
+                    PQ_reg.offset = entry_id * ADC_PE_NUM + s; // per entry offset
+                    for (int m = 0; m < M; m++) {
+#pragma HLS unroll
+                            PQ_reg.PQ_code[m] = PQ_reg_bank_0_1.range(
+                                m * NBITS + (NBITS - 1), m * NBITS);
+                        }
+                    s_PQ_codes[s].write(PQ_reg);
+                }
+#endif 
+
+                // until bank 1
+                ap_uint<(ADC_PE_NUM_UNTIL_BEFORE_BANK_1 - ADC_PE_NUM_UNTIL_AFTER_BANK_0) * M * NBITS> PQ_reg_bank_1 = 
+                    PQ_reg_multi_PE_1.range(
+                        ADC_PE_NUM_UNTIL_BEFORE_BANK_1 * M * NBITS - 512 - 1, 
+                        ADC_PE_NUM_UNTIL_AFTER_BANK_0 * M * NBITS - 512);
+
+                for (int s = ADC_PE_NUM_UNTIL_AFTER_BANK_0; s < ADC_PE_NUM_UNTIL_BEFORE_BANK_1; s++) {
+#pragma HLS unroll
+
+                    PQ_in_t PQ_reg;
+                    
+                    PQ_reg.valid = ((entry_id == compute_iter_per_PE - 1) && (s > last_valid_PE_ID))? 0 : 1;
+                    PQ_reg.cell_ID = cell_ID; 
+                    PQ_reg.offset = entry_id * ADC_PE_NUM + s; // per entry offset
+
+                    // bit refer: https://github.com/WenqiJiang/FPGA-ANNS/blob/main/integrated_accelerator/entire-node-systolic-computation-without-FIFO-type-assignment-fine-grained-PE-with-queue-group-inlined/src/HBM_interconnections.hpp
+                    for (int m = 0; m < M; m++) {
+#pragma HLS unroll
+                        PQ_reg.PQ_code[m] = PQ_reg_bank_1.range(
+                            (s - ADC_PE_NUM_UNTIL_AFTER_BANK_0) * M * NBITS + m * NBITS + (NBITS - 1), 
+                            (s - ADC_PE_NUM_UNTIL_AFTER_BANK_0) * M * NBITS + m * NBITS);
+                    }
+                    s_PQ_codes[s].write(PQ_reg);
+                }
+
+                // between bank 1 and 2
+#if ADC_PE_NUM_UNTIL_BEFORE_BANK_1 != ADC_PE_NUM_UNTIL_AFTER_BANK_1
+                ap_uint<M * NBITS> PQ_reg_bank_1_2; 
+                PQ_reg_bank_1_2.range(512 * 2 - ADC_PE_NUM_UNTIL_BEFORE_BANK_1 * M * NBITS - 1, 0) = 
+                    PQ_reg_multi_PE_1.range(512 - 1, ADC_PE_NUM_UNTIL_BEFORE_BANK_1 * M * NBITS - 512);
+                PQ_reg_bank_1_2.range(M * NBITS - 1, 512 * 2 - ADC_PE_NUM_UNTIL_BEFORE_BANK_1 * M * NBITS) = 
+                    PQ_reg_multi_PE_2.range(ADC_PE_NUM_UNTIL_AFTER_BANK_1 * M * NBITS - 512 * 2 - 1, 0);
+                {
+                    int s = ADC_PE_NUM_UNTIL_BEFORE_BANK_1;
+                    PQ_in_t PQ_reg;
+                    
+                    PQ_reg.valid = ((entry_id == compute_iter_per_PE - 1) && (s > last_valid_PE_ID))? 0 : 1;
+                    PQ_reg.cell_ID = cell_ID; 
+                    PQ_reg.offset = entry_id * ADC_PE_NUM + s; // per entry offset
+                    for (int m = 0; m < M; m++) {
+#pragma HLS unroll
+                            PQ_reg.PQ_code[m] = PQ_reg_bank_1_2.range(
+                                m * NBITS + (NBITS - 1), m * NBITS);
+                        }
+                    s_PQ_codes[s].write(PQ_reg);
+                }
+#endif 
+        // until bank 2
+                ap_uint<(ADC_PE_NUM_UNTIL_BEFORE_BANK_2 - ADC_PE_NUM_UNTIL_AFTER_BANK_1) * M * NBITS> PQ_reg_bank_2 = 
+                    PQ_reg_multi_PE_2.range(
+                        ADC_PE_NUM_UNTIL_BEFORE_BANK_2 * M * NBITS - 512 * 2 - 1, 
+                        ADC_PE_NUM_UNTIL_AFTER_BANK_1 * M * NBITS - 512 * 2);
+
+                for (int s = ADC_PE_NUM_UNTIL_AFTER_BANK_1; s < ADC_PE_NUM_UNTIL_BEFORE_BANK_2; s++) {
+#pragma HLS unroll
+
+                    PQ_in_t PQ_reg;
+                    
+                    PQ_reg.valid = ((entry_id == compute_iter_per_PE - 1) && (s > last_valid_PE_ID))? 0 : 1;
+                    PQ_reg.cell_ID = cell_ID; 
+                    PQ_reg.offset = entry_id * ADC_PE_NUM + s; // per entry offset
+
+                    // bit refer: https://github.com/WenqiJiang/FPGA-ANNS/blob/main/integrated_accelerator/entire-node-systolic-computation-without-FIFO-type-assignment-fine-grained-PE-with-queue-group-inlined/src/HBM_interconnections.hpp
+                    for (int m = 0; m < M; m++) {
+#pragma HLS unroll
+                        PQ_reg.PQ_code[m] = PQ_reg_bank_2.range(
+                            (s - ADC_PE_NUM_UNTIL_AFTER_BANK_1) * M * NBITS + m * NBITS + (NBITS - 1), 
+                            (s - ADC_PE_NUM_UNTIL_AFTER_BANK_1) * M * NBITS + m * NBITS);
+                    }
+                    s_PQ_codes[s].write(PQ_reg);
+                }
+
+                // between bank 2 and 3
+#if ADC_PE_NUM_UNTIL_BEFORE_BANK_2 != ADC_PE_NUM_UNTIL_AFTER_BANK_2
+                ap_uint<M * NBITS> PQ_reg_bank_2_3; 
+                PQ_reg_bank_2_3.range(512 * 3 - ADC_PE_NUM_UNTIL_BEFORE_BANK_2 * M * NBITS - 1, 0) = 
+                    PQ_reg_multi_PE_2.range(512 * 2 - 1, ADC_PE_NUM_UNTIL_BEFORE_BANK_2 * M * NBITS - 512 * 2);
+                PQ_reg_bank_2_3.range(M * NBITS - 1, 512 * 3 - ADC_PE_NUM_UNTIL_BEFORE_BANK_2 * M * NBITS) = 
+                    PQ_reg_multi_PE_3.range(ADC_PE_NUM_UNTIL_AFTER_BANK_2 * M * NBITS - 512 * 3 - 1, 0);
+                {
+                    int s = ADC_PE_NUM_UNTIL_BEFORE_BANK_2;
+                    PQ_in_t PQ_reg;
+                    
+                    PQ_reg.valid = ((entry_id == compute_iter_per_PE - 1) && (s > last_valid_PE_ID))? 0 : 1;
+                    PQ_reg.cell_ID = cell_ID; 
+                    PQ_reg.offset = entry_id * ADC_PE_NUM + s; // per entry offset
+                    for (int m = 0; m < M; m++) {
+#pragma HLS unroll
+                            PQ_reg.PQ_code[m] = PQ_reg_bank_2_3.range(
+                                m * NBITS + (NBITS - 1), m * NBITS);
+                        }
+                    s_PQ_codes[s].write(PQ_reg);
+                }
+#endif 
+
+        // until bank 3 (the end)
+                ap_uint<(ADC_PE_NUM_UNTIL_BEFORE_BANK_3 - ADC_PE_NUM_UNTIL_AFTER_BANK_2) * M * NBITS> PQ_reg_bank_3 = 
+                    PQ_reg_multi_PE_3.range(
+                        ADC_PE_NUM_UNTIL_BEFORE_BANK_3 * M * NBITS - 512 * 3 - 1, 
+                        ADC_PE_NUM_UNTIL_AFTER_BANK_2 * M * NBITS - 512 * 3);
+
+                for (int s = ADC_PE_NUM_UNTIL_AFTER_BANK_2; s < ADC_PE_NUM_UNTIL_BEFORE_BANK_3; s++) {
+#pragma HLS unroll
+
+                    PQ_in_t PQ_reg;
+                    
+                    PQ_reg.valid = ((entry_id == compute_iter_per_PE - 1) && (s > last_valid_PE_ID))? 0 : 1;
+                    PQ_reg.cell_ID = cell_ID; 
+                    PQ_reg.offset = entry_id * ADC_PE_NUM + s; // per entry offset
+
+                    // bit refer: https://github.com/WenqiJiang/FPGA-ANNS/blob/main/integrated_accelerator/entire-node-systolic-computation-without-FIFO-type-assignment-fine-grained-PE-with-queue-group-inlined/src/HBM_interconnections.hpp
+                    for (int m = 0; m < M; m++) {
+#pragma HLS unroll
+                        PQ_reg.PQ_code[m] = PQ_reg_bank_2.range(
+                            (s - ADC_PE_NUM_UNTIL_AFTER_BANK_2) * M * NBITS + m * NBITS + (NBITS - 1), 
+                            (s - ADC_PE_NUM_UNTIL_AFTER_BANK_2) * M * NBITS + m * NBITS);
+                    }
+                    s_PQ_codes[s].write(PQ_reg);
+                }
+
+//                 // ap_uint can be up to 4K bits wide
+//                 // https://docs.xilinx.com/r/en-US/ug1399-vitis-hls/Using-Arbitrary-Precision-Data-Types
+//                 ap_uint<2048> entire_row;
+//                 entire_row.range(512 * 1 - 1, 0) = PQ_reg_multi_PE_0;
+//                 entire_row.range(512 * 2 - 1, 512 * 1) = PQ_reg_multi_PE_1;
+//                 entire_row.range(512 * 3 - 1, 512 * 2) = PQ_reg_multi_PE_2;
+//                 entire_row.range(512 * 4 - 1, 512 * 3) = PQ_reg_multi_PE_3;
+
+//                 for (int s = 0; s < ADC_PE_NUM; s++) {
+// #pragma HLS unroll
+
+//                     PQ_in_t PQ_reg;
+                    
+//                     PQ_reg.valid = ((entry_id == compute_iter_per_PE - 1) && (s > last_valid_PE_ID))? 0 : 1;
+//                     PQ_reg.cell_ID = cell_ID; 
+//                     PQ_reg.offset = entry_id * ADC_PE_NUM + s; // per entry offset
+
+//                     // bit refer: https://github.com/WenqiJiang/FPGA-ANNS/blob/main/integrated_accelerator/entire-node-systolic-computation-without-FIFO-type-assignment-fine-grained-PE-with-queue-group-inlined/src/HBM_interconnections.hpp
+//                     for (int m = 0; m < M; m++) {
+// #pragma HLS unroll
+//                         PQ_reg.PQ_code[m] = entire_row.range(
+//                             s * M * NBITS + m * NBITS + (NBITS - 1), s * M * NBITS + m * NBITS);
+//                     }
+//                     s_PQ_codes[s].write(PQ_reg);
+//                 }
+
+                
             }
         }
     }

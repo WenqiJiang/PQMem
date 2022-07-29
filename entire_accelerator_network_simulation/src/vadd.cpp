@@ -52,39 +52,39 @@ void network_input_processing(
 
     for (int query_id = 0; query_id < query_num; query_id++) {
 
-        for (int nprobe_id = 0; nprobe_id < nprobe; nprobe_id++) {
-            
-            // header meta
-            ap_uint<512> header = s_kernel_network_in.read();
-            ap_uint<32> query_id_unused_uint = header.range(31, 0);
-            ap_uint<32> nprobe_unused_uint = header.range(63, 32);
-            int query_id_unused = *((int*) (&query_id_unused_uint));
-            int nprobe_unused = *((int*) (&nprobe_unused_uint));
+        // header meta
+        ap_uint<512> header = s_kernel_network_in.read();
+        ap_uint<32> query_id_unused_uint = header.range(31, 0);
+        ap_uint<32> nprobe_unused_uint = header.range(63, 32);
+        int query_id_unused = *((int*) (&query_id_unused_uint));
+        int nprobe_unused = *((int*) (&nprobe_unused_uint));
 
-            int size_cell_IDs = nprobe * 4 % 64 == 0? nprobe * 4 / 64: nprobe * 4 / 64 + 1;
-            int size_LUTs = nprobe * 4 * M * LUT_ENTRY_NUM / 64; // should always be int
+        int size_cell_IDs = nprobe * 4 % 64 == 0? nprobe * 4 / 64: nprobe * 4 / 64 + 1;
+        int size_LUTs = nprobe * 4 * M * LUT_ENTRY_NUM / 64; // should always be int
 
-            // cell_IDs
-            for (int i = 0; i < size_cell_IDs; i++) {
+        // cell_IDs
+        for (int i = 0; i < size_cell_IDs; i++) {
 
-                ap_uint<512> pkt = s_kernel_network_in.read();
+            ap_uint<512> pkt = s_kernel_network_in.read();
 
-                for (int j = 0; j < 16; j++) {
+            for (int j = 0; j < 16; j++) {
 
-                    ap_uint<32> cell_ID_uint = pkt.range(32 * j + 31, 32 * j);
-                    int cell_ID = *((int*) (&cell_ID_uint));
+                ap_uint<32> cell_ID_uint = pkt.range(32 * j + 31, 32 * j);
+                int cell_ID = *((int*) (&cell_ID_uint));
 
-                    int cell_count = i * 16 + j;
-                    if (cell_count < nprobe) {
-                        s_cell_ID.write(cell_ID);
-                    }
+                int cell_count = i * 16 + j;
+                if (cell_count < nprobe) {
+                    s_cell_ID.write(cell_ID);
                 }
             }
+        }
+
+        for (int nprobe_id = 0; nprobe_id < nprobe; nprobe_id++) {
 
             // LUTs
-            for (int i = 0; i < size_LUTs; i++) {
                 
 #if M == 8
+            for (int i = 0; i < LUT_ENTRY_NUM / 2; i++) {
                 distance_LUT_parallel_t dist_row_A;
                 distance_LUT_parallel_t dist_row_B;
                 // one 512-bit entry = two PQ code row (8 floats x 4 byte = 32 bytes)
@@ -103,8 +103,9 @@ void network_input_processing(
                     dist_row_B.dist[n] = float_dist;
                 }
                 s_distance_LUT.write(dist_row_B);
-                
+            } 
 #elif M == 16
+            for (int i = 0; i < LUT_ENTRY_NUM; i++) {
                 distance_LUT_parallel_t dist_row;
                 ap_uint<512> reg = s_kernel_network_in.read();
                 for (int n = 0; n < 16; n++) {
@@ -114,8 +115,9 @@ void network_input_processing(
                     dist_row.dist[n] = float_dist;
                 }
                 s_distance_LUT.write(dist_row);
-            
+            }
 #elif M == 32
+            for (int i = 0; i < LUT_ENTRY_NUM; i++) {
                 distance_LUT_parallel_t dist_row;
                 ap_uint<512> reg_A = s_kernel_network_in.read();
                 ap_uint<512> reg_B = s_kernel_network_in.read();
@@ -132,8 +134,9 @@ void network_input_processing(
                     dist_row.dist[n + 16] = float_dist;
                 }
                 s_distance_LUT.write(dist_row);
-                
+            }
 #elif M == 64
+            for (int i = 0; i < LUT_ENTRY_NUM; i++) {
                 distance_LUT_parallel_t dist_row;
                 ap_uint<512> reg_A = s_kernel_network_in.read();
                 ap_uint<512> reg_B = s_kernel_network_in.read();
@@ -164,8 +167,8 @@ void network_input_processing(
                     dist_row.dist[n + 48] = float_dist;
                 }
                 s_distance_LUT.write(dist_row);
-#endif
             }
+#endif
         }
     }
 }

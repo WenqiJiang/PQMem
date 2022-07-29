@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     size_t nprobe = 1;
     size_t num_vec_per_row = 2048 / (M * NBITS);
     size_t entries_num = db_vec_num % num_vec_per_row == 0? 
-        db_vec_num / num_vec_per_row: db_vec_num / num_vec_per_row + 1; // in 512-byte
+        db_vec_num / num_vec_per_row: db_vec_num / num_vec_per_row + 1; // in 512-bit x 4
 
 
     size_t nlist_PQ_codes_start_addr_bytes = nlist * sizeof(int);
