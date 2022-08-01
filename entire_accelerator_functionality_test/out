@@ -10,12 +10,12 @@ INFO: [v++ 82-4274] Default memory will be used for trace offload
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 
 INFO: [v++ 60-1306] Additional information associated with this v++ compile can be found at:
-	Reports: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/reports/vadd.hw
-	Log files: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/logs/vadd.hw
-Running Dispatch Server on port: 36711
-INFO: [v++ 60-1548] Creating build summary session with primary output /pub/scratch/wenqi/PQMem/entire_accelerator/xclbin/vadd.hw.xo.compile_summary, at Mon Jul 25 10:51:13 2022
-INFO: [v++ 60-1316] Initiating connection to rulecheck server, at Mon Jul 25 10:51:13 2022
-INFO: [v++ 60-1315] Creating rulecheck session with output '/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/reports/vadd.hw/v++_compile_vadd.hw_guidance.html', at Mon Jul 25 10:51:14 2022
+	Reports: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/reports/vadd.hw
+	Log files: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/logs/vadd.hw
+Running Dispatch Server on port: 39479
+INFO: [v++ 60-1548] Creating build summary session with primary output /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/xclbin/vadd.hw.xo.compile_summary, at Fri Jul 29 12:55:32 2022
+INFO: [v++ 60-1316] Initiating connection to rulecheck server, at Fri Jul 29 12:55:32 2022
+INFO: [v++ 60-1315] Creating rulecheck session with output '/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/reports/vadd.hw/v++_compile_vadd.hw_guidance.html', at Fri Jul 29 12:55:33 2022
 INFO: [v++ 60-895]   Target platform: /opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/xilinx_u250_gen3x16_xdma_4_1_202210_1.xpfm
 INFO: [v++ 60-1578]   This platform contains Xilinx Shell Archive '/opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/hw/hw.xsa'
 INFO: [v++ 74-78] Compiler Version string: 2022.1
@@ -24,7 +24,7 @@ INFO: [v++ 60-423]   Target device: xilinx_u250_gen3x16_xdma_4_1_202210_1
 INFO: [v++ 60-242] Creating kernel: 'vadd'
 INFO: [v++ 60-1616] Creating a HLS clock using kernel_frequency option: 140 MHz
 
-===>The following messages were generated while  performing high-level synthesis for kernel: vadd Log file: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/vadd.hw/vadd/vitis_hls.log :
+===>The following messages were generated while  performing high-level synthesis for kernel: vadd Log file: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/vadd.hw/vadd/vitis_hls.log :
 INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_401_1'.
 WARNING: [v++ 200-885] The II Violation in module 'load_nlist_init_Pipeline_VITIS_LOOP_401_1' (loop 'VITIS_LOOP_401_1'): Unable to schedule bus request operation ('gmem_control_load_1_req', /tools/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/hls_stream_39.h:174) on port 'gmem_control' (/tools/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/hls_stream_39.h:174) due to limited memory ports (II = 1). Please consider using a memory core with more ports or partitioning the array.
 Resolution: For help on HLS 200-885 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-885.html
@@ -179,11 +179,11 @@ INFO: [v++ 200-790] **** Loop Constraint Status: All loop constraints were NOT s
 INFO: [v++ 200-789] **** Estimated Fmax: 191.78 MHz
 INFO: [v++ 60-594] Finished kernel compilation
 INFO: [v++ 60-244] Generating system estimate report...
-INFO: [v++ 60-1092] Generated system estimate report: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/reports/vadd.hw/system_estimate_vadd.hw.xtxt
+INFO: [v++ 60-1092] Generated system estimate report: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/reports/vadd.hw/system_estimate_vadd.hw.xtxt
 INFO: [v++ 60-586] Created xclbin/vadd.hw.xo
 INFO: [v++ 60-2343] Use the vitis_analyzer tool to visualize and navigate the relevant reports. Run the following command. 
-    vitis_analyzer /pub/scratch/wenqi/PQMem/entire_accelerator/xclbin/vadd.hw.xo.compile_summary 
-INFO: [v++ 60-791] Total elapsed time: 0h 10m 35s
+    vitis_analyzer /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/xclbin/vadd.hw.xo.compile_summary 
+INFO: [v++ 60-791] Total elapsed time: 0h 12m 5s
 INFO: [v++ 60-1653] Closing dispatch client.
 mkdir -p ./xclbin
 v++ -g -t hw --platform xilinx_u250_gen3x16_xdma_4_1_202210_1 --save-temps --config connectivity.cfg -l --temp_dir ./_x.hw -o xclbin/vadd.hw.xclbin xclbin/vadd.hw.xo # 
@@ -195,12 +195,12 @@ INFO: [v++ 82-4274] Default memory will be used for trace offload
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 
 INFO: [v++ 60-1306] Additional information associated with this v++ link can be found at:
-	Reports: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/reports/link
-	Log files: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/logs/link
-Running Dispatch Server on port: 35755
-INFO: [v++ 60-1548] Creating build summary session with primary output /pub/scratch/wenqi/PQMem/entire_accelerator/xclbin/vadd.hw.xclbin.link_summary, at Mon Jul 25 11:01:51 2022
-INFO: [v++ 60-1316] Initiating connection to rulecheck server, at Mon Jul 25 11:01:51 2022
-INFO: [v++ 60-1315] Creating rulecheck session with output '/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/reports/link/v++_link_vadd.hw_guidance.html', at Mon Jul 25 11:01:52 2022
+	Reports: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/reports/link
+	Log files: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/logs/link
+Running Dispatch Server on port: 33505
+INFO: [v++ 60-1548] Creating build summary session with primary output /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/xclbin/vadd.hw.xclbin.link_summary, at Fri Jul 29 13:07:39 2022
+INFO: [v++ 60-1316] Initiating connection to rulecheck server, at Fri Jul 29 13:07:39 2022
+INFO: [v++ 60-1315] Creating rulecheck session with output '/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/reports/link/v++_link_vadd.hw_guidance.html', at Fri Jul 29 13:07:41 2022
 INFO: [v++ 60-895]   Target platform: /opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/xilinx_u250_gen3x16_xdma_4_1_202210_1.xpfm
 INFO: [v++ 60-1578]   This platform contains Xilinx Shell Archive '/opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/hw/hw.xsa'
 INFO: [v++ 74-78] Compiler Version string: 2022.1
@@ -208,18 +208,18 @@ INFO: [v++ 82-4274] Default memory will be used for trace offload
 INFO: [v++ 60-629] Linking for hardware target
 INFO: [v++ 60-423]   Target device: xilinx_u250_gen3x16_xdma_4_1_202210_1
 INFO: [v++ 60-1332] Run 'run_link' status: Not started
-INFO: [v++ 60-1443] [11:02:05] Run run_link: Step system_link: Started
-INFO: [v++ 60-1453] Command Line: system_link --xo /pub/scratch/wenqi/PQMem/entire_accelerator/xclbin/vadd.hw.xo -keep --config /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/syslinkConfig.ini --xpfm /opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/xilinx_u250_gen3x16_xdma_4_1_202210_1.xpfm --target hw --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link
-INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/run_link
-INFO: [SYSTEM_LINK 60-1316] Initiating connection to rulecheck server, at Mon Jul 25 11:02:07 2022
-INFO: [SYSTEM_LINK 82-70] Extracting xo v3 file /pub/scratch/wenqi/PQMem/entire_accelerator/xclbin/vadd.hw.xo
-INFO: [SYSTEM_LINK 82-53] Creating IP database /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml
-INFO: [SYSTEM_LINK 82-38] [11:02:17] build_xd_ip_db started: /tools/Xilinx/Vitis/2022.1/bin/build_xd_ip_db -ip_search 0  -sds-pf /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/hw.hpfm -clkid 0 -ip /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/iprepo/xilinx_com_hls_vadd_1_0,vadd -o /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml
-INFO: [SYSTEM_LINK 82-37] [11:02:25] build_xd_ip_db finished successfully
-Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 2269.246 ; gain = 0.000 ; free physical = 272184 ; free virtual = 357161
+INFO: [v++ 60-1443] [13:07:54] Run run_link: Step system_link: Started
+INFO: [v++ 60-1453] Command Line: system_link --xo /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/xclbin/vadd.hw.xo -keep --config /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/syslinkConfig.ini --xpfm /opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/xilinx_u250_gen3x16_xdma_4_1_202210_1.xpfm --target hw --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/run_link
+INFO: [SYSTEM_LINK 60-1316] Initiating connection to rulecheck server, at Fri Jul 29 13:07:55 2022
+INFO: [SYSTEM_LINK 82-70] Extracting xo v3 file /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/xclbin/vadd.hw.xo
+INFO: [SYSTEM_LINK 82-53] Creating IP database /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml
+INFO: [SYSTEM_LINK 82-38] [13:08:06] build_xd_ip_db started: /tools/Xilinx/Vitis/2022.1/bin/build_xd_ip_db -ip_search 0  -sds-pf /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/hw.hpfm -clkid 0 -ip /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/iprepo/xilinx_com_hls_vadd_1_0,vadd -o /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml
+INFO: [SYSTEM_LINK 82-37] [13:08:14] build_xd_ip_db finished successfully
+Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 2268.258 ; gain = 0.000 ; free physical = 202393 ; free virtual = 264376
 INFO: [SYSTEM_LINK 82-51] Create system connectivity graph
-INFO: [SYSTEM_LINK 82-102] Applying explicit connections to the system connectivity graph: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml
-INFO: [SYSTEM_LINK 82-38] [11:02:25] cfgen started: /tools/Xilinx/Vitis/2022.1/bin/cfgen  -nk vadd:1:vadd_1 -sp vadd_1.nlist_init:DDR[0] -sp vadd_1.cell_ID_DRAM:DDR[1] -sp vadd_1.LUT_DRAM:DDR[2] -sp vadd_1.PQ_codes_DRAM_0:DDR[0] -sp vadd_1.PQ_codes_DRAM_1:DDR[1] -sp vadd_1.PQ_codes_DRAM_2:DDR[2] -sp vadd_1.PQ_codes_DRAM_3:DDR[3] -sp vadd_1.vec_ID_DRAM_0:DDR[0] -sp vadd_1.vec_ID_DRAM_1:DDR[1] -sp vadd_1.vec_ID_DRAM_2:DDR[2] -sp vadd_1.vec_ID_DRAM_3:DDR[3] -sp vadd_1.out_DRAM:DDR[3] -dmclkid 0 -r /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml -o /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml
+INFO: [SYSTEM_LINK 82-102] Applying explicit connections to the system connectivity graph: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml
+INFO: [SYSTEM_LINK 82-38] [13:08:14] cfgen started: /tools/Xilinx/Vitis/2022.1/bin/cfgen  -nk vadd:1:vadd_1 -sp vadd_1.nlist_init:DDR[0] -sp vadd_1.cell_ID_DRAM:DDR[1] -sp vadd_1.LUT_DRAM:DDR[2] -sp vadd_1.PQ_codes_DRAM_0:DDR[0] -sp vadd_1.PQ_codes_DRAM_1:DDR[1] -sp vadd_1.PQ_codes_DRAM_2:DDR[2] -sp vadd_1.PQ_codes_DRAM_3:DDR[3] -sp vadd_1.vec_ID_DRAM_0:DDR[0] -sp vadd_1.vec_ID_DRAM_1:DDR[1] -sp vadd_1.vec_ID_DRAM_2:DDR[2] -sp vadd_1.vec_ID_DRAM_3:DDR[3] -sp vadd_1.out_DRAM:DDR[3] -dmclkid 0 -r /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml -o /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml
 INFO: [CFGEN 83-0] Kernel Specs: 
 INFO: [CFGEN 83-0]   kernel: vadd, num: 1  {vadd_1}
 INFO: [CFGEN 83-0] Port Specs: 
@@ -235,179 +235,261 @@ INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: vec_ID_DRAM_1, sptag: DDR[1]
 INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: vec_ID_DRAM_2, sptag: DDR[2]
 INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: vec_ID_DRAM_3, sptag: DDR[3]
 INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: out_DRAM, sptag: DDR[3]
-INFO: [SYSTEM_LINK 82-37] [11:02:30] cfgen finished successfully
-Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 2269.246 ; gain = 0.000 ; free physical = 272184 ; free virtual = 357161
+INFO: [SYSTEM_LINK 82-37] [13:08:19] cfgen finished successfully
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 2268.258 ; gain = 0.000 ; free physical = 202544 ; free virtual = 264536
 INFO: [SYSTEM_LINK 82-52] Create top-level block diagram
-INFO: [SYSTEM_LINK 82-38] [11:02:30] cf2bd started: /tools/Xilinx/Vitis/2022.1/bin/cf2bd  --linux --trace_buffer 1024 --input_file /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml --ip_db /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml --cf_name dr --working_dir /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/_sysl/.xsd --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int --target_bd ulp.bd
-INFO: [CF2BD 82-31] Launching cf2xd: cf2xd -linux -trace-buffer 1024 -i /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml -r /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml -o dr.xml
+INFO: [SYSTEM_LINK 82-38] [13:08:19] cf2bd started: /tools/Xilinx/Vitis/2022.1/bin/cf2bd  --linux --trace_buffer 1024 --input_file /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml --ip_db /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml --cf_name dr --working_dir /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/_sysl/.xsd --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int --target_bd ulp.bd
+INFO: [CF2BD 82-31] Launching cf2xd: cf2xd -linux -trace-buffer 1024 -i /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml -r /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml -o dr.xml
 INFO: [CF2BD 82-28] cf2xd finished successfully
-INFO: [CF2BD 82-31] Launching cf_xsd: cf_xsd -disable-address-gen -bd ulp.bd -dn dr -dp /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/sys_link/_sysl/.xsd
+INFO: [CF2BD 82-31] Launching cf_xsd: cf_xsd -disable-address-gen -bd ulp.bd -dn dr -dp /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/sys_link/_sysl/.xsd
 INFO: [CF2BD 82-28] cf_xsd finished successfully
-INFO: [SYSTEM_LINK 82-37] [11:02:34] cf2bd finished successfully
-Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2269.246 ; gain = 0.000 ; free physical = 272421 ; free virtual = 357403
-INFO: [v++ 60-1441] [11:02:34] Run run_link: Step system_link: Completed
-Time (s): cpu = 00:00:22 ; elapsed = 00:00:29 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 272462 ; free virtual = 357445
-INFO: [v++ 60-1443] [11:02:34] Run run_link: Step cf2sw: Started
-INFO: [v++ 60-1453] Command Line: cf2sw -sdsl /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/sdsl.dat -rtd /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/cf2sw.rtd -nofilter /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/cf2sw_full.rtd -xclbin /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/xclbin_orig.xml -o /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/xclbin_orig.1.xml
-INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/run_link
-INFO: [v++ 60-1441] [11:02:39] Run run_link: Step cf2sw: Completed
-Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 272467 ; free virtual = 357450
-INFO: [v++ 60-1443] [11:02:39] Run run_link: Step rtd2_system_diagram: Started
+INFO: [SYSTEM_LINK 82-37] [13:08:23] cf2bd finished successfully
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2268.258 ; gain = 0.000 ; free physical = 205463 ; free virtual = 267456
+INFO: [v++ 60-1441] [13:08:23] Run run_link: Step system_link: Completed
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:30 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 205502 ; free virtual = 267496
+INFO: [v++ 60-1443] [13:08:23] Run run_link: Step cf2sw: Started
+INFO: [v++ 60-1453] Command Line: cf2sw -sdsl /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/sdsl.dat -rtd /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/cf2sw.rtd -nofilter /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/cf2sw_full.rtd -xclbin /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/xclbin_orig.xml -o /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/xclbin_orig.1.xml
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/run_link
+INFO: [v++ 60-1441] [13:08:28] Run run_link: Step cf2sw: Completed
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 202377 ; free virtual = 264367
+INFO: [v++ 60-1443] [13:08:28] Run run_link: Step rtd2_system_diagram: Started
 INFO: [v++ 60-1453] Command Line: rtd2SystemDiagram
-INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/run_link
-INFO: [v++ 60-1441] [11:02:40] Run run_link: Step rtd2_system_diagram: Completed
-Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.61 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 272439 ; free virtual = 357422
-INFO: [v++ 60-1443] [11:02:40] Run run_link: Step vpl: Started
-INFO: [v++ 60-1453] Command Line: vpl -t hw -f xilinx_u250_gen3x16_xdma_4_1_202210_1 -g --kernel_frequency 140 --remote_ip_cache /pub/scratch/wenqi/PQMem/entire_accelerator/.ipcache -s --trace_memory DDR[0] --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int --log_dir /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/logs/link --report_dir /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/reports/link --config /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/vplConfig.ini -k /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/kernel_info.dat --webtalk_flag Vitis --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link --no-info --iprepo /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/xo/ip_repo/xilinx_com_hls_vadd_1_0 --messageDb /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/run_link/vpl.pb /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/dr.bd.tcl
-INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/run_link
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/run_link
+INFO: [v++ 60-1441] [13:08:29] Run run_link: Step rtd2_system_diagram: Completed
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.71 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 201689 ; free virtual = 263678
+INFO: [v++ 60-1443] [13:08:29] Run run_link: Step vpl: Started
+INFO: [v++ 60-1453] Command Line: vpl -t hw -f xilinx_u250_gen3x16_xdma_4_1_202210_1 -g --kernel_frequency 140 --remote_ip_cache /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/.ipcache -s --trace_memory DDR[0] --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int --log_dir /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/logs/link --report_dir /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/reports/link --config /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/vplConfig.ini -k /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/kernel_info.dat --webtalk_flag Vitis --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link --no-info --iprepo /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/xo/ip_repo/xilinx_com_hls_vadd_1_0 --messageDb /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/run_link/vpl.pb /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/dr.bd.tcl
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/run_link
 
 ****** vpl v2022.1 (64-bit)
   **** SW Build 3524075 on 2022-04-13-17:42:45
     ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 
-INFO: [VPL 60-839] Read in kernel information from file '/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/kernel_info.dat'.
+INFO: [VPL 60-839] Read in kernel information from file '/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/kernel_info.dat'.
 INFO: [VPL 74-78] Compiler Version string: 2022.1
 INFO: [VPL 60-423]   Target device: xilinx_u250_gen3x16_xdma_4_1_202210_1
 INFO: [VPL 82-4282] Memory used for trace offload is DDR 0 
-INFO: [VPL 60-1032] Extracting hardware platform to /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/vivado/vpl/.local/hw_platform
-[11:02:56] Run vpl: Step create_project: Started
+INFO: [VPL 60-1032] Extracting hardware platform to /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/vivado/vpl/.local/hw_platform
+[13:08:48] Run vpl: Step create_project: Started
 Creating Vivado project.
-[11:03:01] Run vpl: Step create_project: Completed
-[11:03:01] Run vpl: Step create_bd: Started
-[11:03:45] Run vpl: Step create_bd: Completed
-[11:03:45] Run vpl: Step update_bd: Started
+[13:08:53] Run vpl: Step create_project: Completed
+[13:08:53] Run vpl: Step create_bd: Started
+[13:09:39] Run vpl: Step create_bd: Completed
+[13:09:39] Run vpl: Step update_bd: Started
 WARNING: [VPL-1] The use of profile options turned on trace, which uses a memory resource in one SLR; however kernels or compute units could potentially be located in multiple SLRs. This may impact timing due to SLR crossing. To improve timing, please consider implementing trace memory in every SLRs used via the linker option: --profile.trace_memory <memory>:<SLR>. SLRs present on the design : SLR0 SLR1 SLR2 SLR3
-[11:03:56] Run vpl: Step update_bd: Completed
-[11:03:56] Run vpl: Step generate_target: Started
-[11:05:15] Run vpl: Step generate_target: RUNNING...
-[11:06:34] Run vpl: Step generate_target: RUNNING...
-[11:07:56] Run vpl: Step generate_target: RUNNING...
-[11:07:58] Run vpl: Step generate_target: Completed
-[11:07:58] Run vpl: Step config_hw_runs: Started
-[11:08:03] Run vpl: Step config_hw_runs: Completed
-[11:08:03] Run vpl: Step synth: Started
-[11:09:14] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
-[11:09:46] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
-[11:10:20] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
-[11:10:49] Run vpl: Step synth: Completed
-[11:10:49] Run vpl: Step impl: Started
-[11:29:18] Finished 2nd of 6 tasks (FPGA linking synthesized kernels to platform). Elapsed time: 00h 26m 36s 
+[13:09:53] Run vpl: Step update_bd: Completed
+[13:09:53] Run vpl: Step generate_target: Started
+[13:11:11] Run vpl: Step generate_target: RUNNING...
+[13:12:30] Run vpl: Step generate_target: RUNNING...
+[13:13:52] Run vpl: Step generate_target: RUNNING...
+[13:14:12] Run vpl: Step generate_target: Completed
+[13:14:12] Run vpl: Step config_hw_runs: Started
+[13:14:17] Run vpl: Step config_hw_runs: Completed
+[13:14:17] Run vpl: Step synth: Started
+[13:14:53] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:15:27] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:15:59] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:16:34] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:17:07] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:17:40] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:18:13] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:18:47] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:19:20] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:19:54] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:20:27] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:21:01] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:21:34] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:22:09] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:22:42] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:23:16] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:23:49] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:24:23] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:24:56] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:25:30] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:26:03] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:26:37] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:27:10] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:27:44] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:28:17] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:28:51] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:29:24] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:29:58] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:30:31] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:31:05] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:31:38] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:32:12] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:32:45] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:33:18] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:33:51] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:34:25] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:34:58] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:35:33] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:36:06] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:36:40] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:37:13] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:37:48] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:38:21] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:38:55] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:39:28] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:40:03] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:40:36] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:41:10] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:41:43] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:42:17] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:42:50] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:43:24] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:43:57] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:44:32] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:45:05] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:45:39] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:46:12] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:46:46] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:47:19] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:47:53] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:48:26] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:49:00] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:49:34] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:50:08] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:50:41] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:51:15] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:51:49] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:52:23] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:52:56] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:53:31] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:54:04] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:54:39] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:55:12] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:55:46] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:56:20] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:56:54] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:57:27] Block-level synthesis in progress, 0 of 1 jobs complete, 1 job running.
+[13:58:02] Top-level synthesis in progress.
+[13:58:33] Top-level synthesis in progress.
+[13:59:05] Top-level synthesis in progress.
+[13:59:40] Top-level synthesis in progress.
+[14:00:09] Run vpl: Step synth: Completed
+[14:00:09] Run vpl: Step impl: Started
+[14:20:17] Finished 2nd of 6 tasks (FPGA linking synthesized kernels to platform). Elapsed time: 01h 11m 45s 
 
-[11:29:18] Starting logic optimization..
-[11:29:52] Phase 1 Generate And Synthesize MIG Cores
-[11:39:24] Phase 2 Generate And Synthesize Debug Cores
-[11:41:38] Phase 3 Retarget
-[11:42:12] Phase 4 Constant propagation
-[11:42:45] Phase 5 Sweep
-[11:43:52] Phase 6 BUFG optimization
-[11:43:52] Phase 7 Shift Register Optimization
-[11:43:52] Phase 8 Post Processing Netlist
-[11:51:09] Finished 3rd of 6 tasks (FPGA logic optimization). Elapsed time: 00h 21m 51s 
+[14:20:17] Starting logic optimization..
+[14:21:24] Phase 1 Generate And Synthesize MIG Cores
+[14:34:17] Phase 2 Generate And Synthesize Debug Cores
+[14:37:05] Phase 3 Retarget
+[14:37:38] Phase 4 Constant propagation
+[14:37:38] Phase 5 Sweep
+[14:39:19] Phase 6 BUFG optimization
+[14:39:19] Phase 7 Shift Register Optimization
+[14:39:19] Phase 8 Post Processing Netlist
+[14:47:09] Finished 3rd of 6 tasks (FPGA logic optimization). Elapsed time: 00h 26m 52s 
 
-[11:51:09] Starting logic placement..
-[11:52:50] Phase 1 Placer Initialization
-[11:52:50] Phase 1.1 Placer Initialization Netlist Sorting
-[11:58:26] Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device
-[12:00:40] Phase 1.3 Build Placer Netlist Model
-[12:05:09] Phase 1.4 Constrain Clocks/Macros
-[12:05:42] Phase 2 Global Placement
-[12:05:42] Phase 2.1 Floorplanning
-[12:09:37] Phase 2.1.1 Partition Driven Placement
-[12:09:37] Phase 2.1.1.1 PBP: Partition Driven Placement
-[12:12:59] Phase 2.1.1.2 PBP: Clock Region Placement
-[12:18:37] Phase 2.1.1.3 PBP: Compute Congestion
-[12:18:37] Phase 2.1.1.4 PBP: UpdateTiming
-[12:19:45] Phase 2.1.1.5 PBP: Add part constraints
-[12:19:45] Phase 2.2 Physical Synthesis After Floorplan
-[12:20:19] Phase 2.3 Update Timing before SLR Path Opt
-[12:20:19] Phase 2.4 Post-Processing in Floorplanning
-[12:20:19] Phase 2.5 Global Placement Core
-[12:32:07] Phase 2.5.1 Physical Synthesis In Placer
-[12:40:33] Phase 3 Detail Placement
-[12:40:33] Phase 3.1 Commit Multi Column Macros
-[12:41:07] Phase 3.2 Commit Most Macros & LUTRAMs
-[12:47:18] Phase 3.3 Small Shape DP
-[12:47:18] Phase 3.3.1 Small Shape Clustering
-[12:47:51] Phase 3.3.2 Flow Legalize Slice Clusters
-[12:47:51] Phase 3.3.3 Slice Area Swap
-[12:48:25] Phase 3.3.3.1 Slice Area Swap Initial
-[12:51:47] Phase 3.4 Place Remaining
-[12:51:47] Phase 3.5 Re-assign LUT pins
-[12:56:17] Phase 3.6 Pipeline Register Optimization
-[12:56:50] Phase 3.7 Fast Optimization
-[12:59:05] Phase 4 Post Placement Optimization and Clean-Up
-[12:59:05] Phase 4.1 Post Commit Optimization
-[13:02:27] Phase 4.1.1 Post Placement Optimization
-[13:03:34] Phase 4.1.1.1 BUFG Insertion
-[13:03:34] Phase 1 Physical Synthesis Initialization
-[13:08:37] Phase 4.1.1.2 BUFG Replication
-[13:09:45] Phase 4.1.1.3 Post Placement Timing Optimization
-[13:15:56] Phase 4.1.1.4 Replication
-[13:19:18] Phase 4.2 Post Placement Cleanup
-[13:19:18] Phase 4.3 Placer Reporting
-[13:19:18] Phase 4.3.1 Print Estimated Congestion
-[13:19:18] Phase 4.4 Final Placement Cleanup
-[13:49:50] Finished 4th of 6 tasks (FPGA logic placement). Elapsed time: 01h 58m 40s 
+[14:47:09] Starting logic placement..
+[14:48:49] Phase 1 Placer Initialization
+[14:49:23] Phase 1.1 Placer Initialization Netlist Sorting
+[14:55:31] Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device
+[14:57:45] Phase 1.3 Build Placer Netlist Model
+[15:02:13] Phase 1.4 Constrain Clocks/Macros
+[15:02:46] Phase 2 Global Placement
+[15:02:46] Phase 2.1 Floorplanning
+[15:07:15] Phase 2.1.1 Partition Driven Placement
+[15:07:15] Phase 2.1.1.1 PBP: Partition Driven Placement
+[15:11:10] Phase 2.1.1.2 PBP: Clock Region Placement
+[15:17:21] Phase 2.1.1.3 PBP: Compute Congestion
+[15:17:21] Phase 2.1.1.4 PBP: UpdateTiming
+[15:17:55] Phase 2.1.1.5 PBP: Add part constraints
+[15:17:55] Phase 2.2 Physical Synthesis After Floorplan
+[15:19:02] Phase 2.3 Update Timing before SLR Path Opt
+[15:19:02] Phase 2.4 Post-Processing in Floorplanning
+[15:19:02] Phase 2.5 Global Placement Core
+[15:31:56] Phase 2.5.1 Physical Synthesis In Placer
+[15:42:37] Phase 3 Detail Placement
+[15:42:37] Phase 3.1 Commit Multi Column Macros
+[15:43:11] Phase 3.2 Commit Most Macros & LUTRAMs
+[15:56:42] Phase 3.3 Small Shape DP
+[15:56:42] Phase 3.3.1 Small Shape Clustering
+[15:57:16] Phase 3.3.2 Flow Legalize Slice Clusters
+[15:57:50] Phase 3.3.3 Slice Area Swap
+[15:57:50] Phase 3.3.3.1 Slice Area Swap Initial
+[16:04:02] Phase 3.4 Place Remaining
+[16:04:35] Phase 3.5 Re-assign LUT pins
+[16:14:42] Phase 3.6 Pipeline Register Optimization
+[16:14:42] Phase 3.7 Fast Optimization
+[16:16:23] Phase 4 Post Placement Optimization and Clean-Up
+[16:16:23] Phase 4.1 Post Commit Optimization
+[16:19:45] Phase 4.1.1 Post Placement Optimization
+[16:20:53] Phase 4.1.1.1 BUFG Insertion
+[16:20:53] Phase 1 Physical Synthesis Initialization
+[16:27:38] Phase 4.1.1.2 BUFG Replication
+[16:28:12] Phase 4.1.1.3 Post Placement Timing Optimization
+[16:36:38] Phase 4.1.1.4 Replication
+[16:39:27] Phase 4.2 Post Placement Cleanup
+[16:39:27] Phase 4.3 Placer Reporting
+[16:39:27] Phase 4.3.1 Print Estimated Congestion
+[16:40:01] Phase 4.4 Final Placement Cleanup
+[17:11:03] Finished 4th of 6 tasks (FPGA logic placement). Elapsed time: 02h 23m 54s 
 
-[13:49:50] Starting logic routing..
-[13:52:05] Phase 1 Build RT Design
-[13:57:10] Phase 2 Router Initialization
-[13:57:10] Phase 2.1 Fix Topology Constraints
-[13:57:44] Phase 2.2 Pre Route Cleanup
-[13:58:51] Phase 2.3 Global Clock Net Routing
-[13:59:59] Phase 2.4 Update Timing
-[14:05:02] Phase 2.5 Update Timing for Bus Skew
-[14:05:02] Phase 2.5.1 Update Timing
-[14:07:51] Phase 3 Initial Routing
-[14:07:51] Phase 3.1 Global Routing
-[14:07:51] Phase 3.1.1 Global Routing
-[14:07:51] Phase 3.1.1.1 Build GR Node Graph
-[14:10:39] Phase 3.1.1.2 Run Global Routing
-[14:44:26] Phase 4 Initial Routing Verification
-[14:45:34] Phase 5 Rip-up And Reroute
-[14:45:34] Phase 5.1 Global Iteration 0
-[15:16:32] Phase 5.2 Global Iteration 1
-[15:21:03] Phase 5.3 Global Iteration 2
-[15:42:28] Phase 5.4 Global Iteration 3
-[16:24:48] Phase 6 Delay and Skew Optimization
-[16:24:48] Phase 6.1 Delay CleanUp
-[16:24:48] Phase 6.1.1 Update Timing
-[16:27:05] Phase 6.1.2 Update Timing
-[16:28:47] Phase 6.2 Clock Skew Optimization
-[16:29:55] Phase 7 Post Hold Fix
-[16:29:55] Phase 7.1 Hold Fix Iter
-[16:29:55] Phase 7.1.1 Update Timing
-[16:31:38] Phase 7.1.2 Global Iteration for Hold
-[16:31:38] Phase 7.1.2.1 Update Timing
-[16:36:11] Phase 8 Route finalize
-[16:36:45] Phase 9 Verifying routed nets
-[16:39:01] Phase 10 Depositing Routes
+[17:11:03] Starting logic routing..
+[17:13:18] Phase 1 Build RT Design
+[17:19:28] Phase 2 Router Initialization
+[17:19:28] Phase 2.1 Fix Topology Constraints
+[17:20:02] Phase 2.2 Pre Route Cleanup
+[17:20:35] Phase 2.3 Global Clock Net Routing
+[17:22:16] Phase 2.4 Update Timing
+[17:27:53] Phase 2.5 Update Timing for Bus Skew
+[17:27:53] Phase 2.5.1 Update Timing
+[17:30:42] Phase 3 Initial Routing
+[17:30:42] Phase 3.1 Global Routing
+[17:30:42] Phase 3.1.1 Global Routing
+[17:30:42] Phase 3.1.1.1 Build GR Node Graph
+[17:34:03] Phase 3.1.1.2 Run Global Routing
+[18:17:51] Phase 4 Rip-up And Reroute
+[18:17:51] Phase 4.1 Global Iteration 0
+[18:47:35] Phase 4.2 Global Iteration 1
+[18:52:05] Phase 4.3 Global Iteration 2
+[18:57:09] Phase 4.4 Global Iteration 3
+[19:02:11] Phase 5 Delay and Skew Optimization
+[19:02:11] Phase 5.1 Delay CleanUp
+[19:02:11] Phase 5.1.1 Update Timing
+[19:04:25] Phase 5.2 Clock Skew Optimization
+[19:05:32] Phase 6 Post Hold Fix
+[19:05:32] Phase 6.1 Hold Fix Iter
+[19:05:32] Phase 6.1.1 Update Timing
+[19:07:13] Phase 6.1.2 Global Iteration for Hold
+[19:07:13] Phase 6.1.2.1 Update Timing
+[19:11:42] Phase 7 Route finalize
+[19:12:16] Phase 8 Verifying routed nets
+[19:12:50] Phase 9 Depositing Routes
+[19:14:31] Phase 10 Resolve XTalk
+[19:15:04] Phase 11 Route finalize
+[19:15:38] Phase 12 Post Router Timing
+[19:17:53] Finished 5th of 6 tasks (FPGA routing). Elapsed time: 02h 06m 50s 
+
+[19:17:53] Starting bitstream generation..
 Starting optional post-route physical design optimization.
-[17:06:27] Phase 1 Physical Synthesis Initialization
-[17:13:51] Phase 2 SLL Register Hold Fix Optimization
-[17:13:51] Phase 3 Critical Path Optimization
-[17:34:23] Phase 4 Hold Fix Optimization
+[19:37:32] Phase 1 Physical Synthesis Initialization
+[19:44:48] Phase 2 SLL Register Hold Fix Optimization
+[19:44:48] Phase 3 Critical Path Optimization
+[19:44:48] Phase 4 Hold Fix Optimization
 Finished optional post-route physical design optimization.
-[17:55:26] Creating bitmap...
-[18:01:05] Writing bitstream ./level0_i_level1_level1_i_ulp_my_rm_partial.bit...
-[18:01:05] Finished 6th of 6 tasks (FPGA bitstream generation). Elapsed time: 04h 11m 15s 
-[18:01:27] Run vpl: Step impl: Completed
-[18:01:30] Run vpl: FINISHED. Run Status: impl Complete!
-INFO: [v++ 60-1441] [18:01:33] Run run_link: Step vpl: Completed
-Time (s): cpu = 00:05:03 ; elapsed = 06:58:53 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 195171 ; free virtual = 295211
-INFO: [v++ 60-1443] [18:01:33] Run run_link: Step rtdgen: Started
+[20:12:17] Creating bitmap...
+[20:18:28] Writing bitstream ./level0_i_level1_level1_i_ulp_my_rm_partial.bit...
+[20:18:58] Finished 6th of 6 tasks (FPGA bitstream generation). Elapsed time: 01h 01m 05s 
+[20:18:55] Run vpl: Step impl: Completed
+[20:18:59] Run vpl: FINISHED. Run Status: impl Complete!
+INFO: [v++ 60-1441] [20:19:01] Run run_link: Step vpl: Completed
+Time (s): cpu = 00:05:03 ; elapsed = 07:10:31 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 220614 ; free virtual = 308224
+INFO: [v++ 60-1443] [20:19:01] Run run_link: Step rtdgen: Started
 INFO: [v++ 60-1453] Command Line: rtdgen
-INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/run_link
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/run_link
 INFO: [v++ 60-991] clock name 'ss_ucs/aclk_kernel_00' (clock ID '0') is being mapped to clock name 'DATA_CLK' in the xclbin
 INFO: [v++ 60-991] clock name 'ss_ucs/aclk_kernel_01' (clock ID '1') is being mapped to clock name 'KERNEL_CLK' in the xclbin
-INFO: [v++ 60-1230] The compiler selected the following frequencies for the runtime controllable kernel clock(s) and scalable system clock(s): Kernel (DATA) clock: ss_ucs/aclk_kernel_00 = 136, Kernel (KERNEL) clock: ss_ucs/aclk_kernel_01 = 500
-INFO: [v++ 60-1453] Command Line: cf2sw -force-enable-memory DDR[0] -a /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/address_map.xml -sdsl /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/sdsl.dat -xclbin /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/xclbin_orig.xml -rtd /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/vadd.hw.rtd -o /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/vadd.hw.xml
+INFO: [v++ 60-1230] The compiler selected the following frequencies for the runtime controllable kernel clock(s) and scalable system clock(s): Kernel (DATA) clock: ss_ucs/aclk_kernel_00 = 140, Kernel (KERNEL) clock: ss_ucs/aclk_kernel_01 = 500
+INFO: [v++ 60-1453] Command Line: cf2sw -force-enable-memory DDR[0] -a /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/address_map.xml -sdsl /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/sdsl.dat -xclbin /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/xclbin_orig.xml -rtd /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/vadd.hw.rtd -o /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/vadd.hw.xml
 INFO: [v++ 60-1652] Cf2sw returned exit code: 0
-INFO: [v++ 60-1441] [18:01:38] Run run_link: Step rtdgen: Completed
-Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 198393 ; free virtual = 298434
-INFO: [v++ 60-1443] [18:01:38] Run run_link: Step xclbinutil: Started
-INFO: [v++ 60-1453] Command Line: xclbinutil --add-section DEBUG_IP_LAYOUT:JSON:/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/debug_ip_layout.rtd --add-section BITSTREAM:RAW:/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/partial.bit --force --target hw --key-value SYS:dfx_enable:true --add-section :JSON:/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/vadd.hw.rtd --append-section :JSON:/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/appendSection.rtd --add-section CLOCK_FREQ_TOPOLOGY:JSON:/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/vadd.hw_xml.rtd --add-section BUILD_METADATA:JSON:/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/vadd.hw_build.rtd --add-section EMBEDDED_METADATA:RAW:/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/vadd.hw.xml --add-section SYSTEM_METADATA:RAW:/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/systemDiagramModelSlrBaseAddress.json --key-value SYS:PlatformVBNV:xilinx_u250_gen3x16_xdma_4_1_202210_1 --output /pub/scratch/wenqi/PQMem/entire_accelerator/xclbin/vadd.hw.xclbin
-INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/run_link
+INFO: [v++ 60-1441] [20:19:05] Run run_link: Step rtdgen: Completed
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 222748 ; free virtual = 310358
+INFO: [v++ 60-1443] [20:19:05] Run run_link: Step xclbinutil: Started
+INFO: [v++ 60-1453] Command Line: xclbinutil --add-section DEBUG_IP_LAYOUT:JSON:/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/debug_ip_layout.rtd --add-section BITSTREAM:RAW:/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/partial.bit --force --target hw --key-value SYS:dfx_enable:true --add-section :JSON:/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/vadd.hw.rtd --append-section :JSON:/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/appendSection.rtd --add-section CLOCK_FREQ_TOPOLOGY:JSON:/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/vadd.hw_xml.rtd --add-section BUILD_METADATA:JSON:/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/vadd.hw_build.rtd --add-section EMBEDDED_METADATA:RAW:/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/vadd.hw.xml --add-section SYSTEM_METADATA:RAW:/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/systemDiagramModelSlrBaseAddress.json --key-value SYS:PlatformVBNV:xilinx_u250_gen3x16_xdma_4_1_202210_1 --output /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/xclbin/vadd.hw.xclbin
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/run_link
 XRT Build Version: 2.13.466 (2022.1)
        Build Date: 2022-04-14 17:43:11
           Hash ID: f5505e402c2ca1ffe45eb6d3a9399b23a0dc8776
@@ -416,12 +498,12 @@ Creating a default 'in-memory' xclbin image.
 Section: 'DEBUG_IP_LAYOUT'(9) was successfully added.
 Size   : 2168 bytes
 Format : JSON
-File   : '/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/debug_ip_layout.rtd'
+File   : '/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/debug_ip_layout.rtd'
 
 Section: 'BITSTREAM'(0) was successfully added.
-Size   : 67431086 bytes
+Size   : 67452886 bytes
 Format : RAW
-File   : '/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/partial.bit'
+File   : '/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/partial.bit'
 
 Section: 'MEM_TOPOLOGY'(6) was successfully added.
 Format : JSON
@@ -438,22 +520,22 @@ File   : 'connectivity'
 Section: 'CLOCK_FREQ_TOPOLOGY'(11) was successfully added.
 Size   : 274 bytes
 Format : JSON
-File   : '/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/vadd.hw_xml.rtd'
+File   : '/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/vadd.hw_xml.rtd'
 
 Section: 'BUILD_METADATA'(14) was successfully added.
 Size   : 6430 bytes
 Format : JSON
-File   : '/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/vadd.hw_build.rtd'
+File   : '/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/vadd.hw_build.rtd'
 
 Section: 'EMBEDDED_METADATA'(2) was successfully added.
 Size   : 395439 bytes
 Format : RAW
-File   : '/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/vadd.hw.xml'
+File   : '/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/vadd.hw.xml'
 
 Section: 'SYSTEM_METADATA'(22) was successfully added.
-Size   : 35623 bytes
+Size   : 35621 bytes
 Format : RAW
-File   : '/pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/int/systemDiagramModelSlrBaseAddress.json'
+File   : '/pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/int/systemDiagramModelSlrBaseAddress.json'
 
 Section: 'PARTITION_METADATA'(20) was successfully appended to.
 Format : JSON
@@ -462,33 +544,33 @@ File   : 'partition_metadata'
 Section: 'IP_LAYOUT'(8) was successfully appended to.
 Format : JSON
 File   : 'ip_layout'
-Successfully wrote (67893457 bytes) to the output file: /pub/scratch/wenqi/PQMem/entire_accelerator/xclbin/vadd.hw.xclbin
+Successfully wrote (67915257 bytes) to the output file: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/xclbin/vadd.hw.xclbin
 Leaving xclbinutil.
-INFO: [v++ 60-1441] [18:01:39] Run run_link: Step xclbinutil: Completed
-Time (s): cpu = 00:00:00.15 ; elapsed = 00:00:00.84 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 198323 ; free virtual = 298429
-INFO: [v++ 60-1443] [18:01:39] Run run_link: Step xclbinutilinfo: Started
-INFO: [v++ 60-1453] Command Line: xclbinutil --quiet --force --info /pub/scratch/wenqi/PQMem/entire_accelerator/xclbin/vadd.hw.xclbin.info --input /pub/scratch/wenqi/PQMem/entire_accelerator/xclbin/vadd.hw.xclbin
-INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/run_link
-INFO: [v++ 60-1441] [18:01:39] Run run_link: Step xclbinutilinfo: Completed
-Time (s): cpu = 00:00:00.61 ; elapsed = 00:00:00.76 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 198293 ; free virtual = 298398
-INFO: [v++ 60-1443] [18:01:39] Run run_link: Step generate_sc_driver: Started
+INFO: [v++ 60-1441] [20:19:06] Run run_link: Step xclbinutil: Completed
+Time (s): cpu = 00:00:00.13 ; elapsed = 00:00:00.87 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 222674 ; free virtual = 310349
+INFO: [v++ 60-1443] [20:19:06] Run run_link: Step xclbinutilinfo: Started
+INFO: [v++ 60-1453] Command Line: xclbinutil --quiet --force --info /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/xclbin/vadd.hw.xclbin.info --input /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/xclbin/vadd.hw.xclbin
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/run_link
+INFO: [v++ 60-1441] [20:19:07] Run run_link: Step xclbinutilinfo: Completed
+Time (s): cpu = 00:00:00.59 ; elapsed = 00:00:00.76 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 222676 ; free virtual = 310350
+INFO: [v++ 60-1443] [20:19:07] Run run_link: Step generate_sc_driver: Started
 INFO: [v++ 60-1453] Command Line: 
-INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/link/run_link
-INFO: [v++ 60-1441] [18:01:39] Run run_link: Step generate_sc_driver: Completed
-Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.02 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 198301 ; free virtual = 298401
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/link/run_link
+INFO: [v++ 60-1441] [20:19:07] Run run_link: Step generate_sc_driver: Completed
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.02 . Memory (MB): peak = 2199.484 ; gain = 0.000 ; free physical = 222675 ; free virtual = 310350
 INFO: [v++ 60-244] Generating system estimate report...
-INFO: [v++ 60-1092] Generated system estimate report: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/reports/link/system_estimate_vadd.hw.xtxt
-INFO: [v++ 60-586] Created /pub/scratch/wenqi/PQMem/entire_accelerator/xclbin/vadd.hw.ltx
+INFO: [v++ 60-1092] Generated system estimate report: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/reports/link/system_estimate_vadd.hw.xtxt
+INFO: [v++ 60-586] Created /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/xclbin/vadd.hw.ltx
 INFO: [v++ 60-586] Created xclbin/vadd.hw.xclbin
 INFO: [v++ 60-1307] Run completed. Additional information can be found in:
-	Guidance: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/reports/link/v++_link_vadd.hw_guidance.html
-	Timing Report: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/reports/link/imp/impl_1_hw_bb_locked_timing_summary_routed.rpt
-	Vivado Log: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/logs/link/vivado.log
-	Steps Log File: /pub/scratch/wenqi/PQMem/entire_accelerator/_x.hw/logs/link/link.steps.log
+	Guidance: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/reports/link/v++_link_vadd.hw_guidance.html
+	Timing Report: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/reports/link/imp/impl_1_hw_bb_locked_timing_summary_routed.rpt
+	Vivado Log: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/logs/link/vivado.log
+	Steps Log File: /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/_x.hw/logs/link/link.steps.log
 
 INFO: [v++ 60-2343] Use the vitis_analyzer tool to visualize and navigate the relevant reports. Run the following command. 
-    vitis_analyzer /pub/scratch/wenqi/PQMem/entire_accelerator/xclbin/vadd.hw.xclbin.link_summary 
-INFO: [v++ 60-791] Total elapsed time: 6h 59m 59s
+    vitis_analyzer /pub/scratch/wenqi/PQMem/entire_accelerator_functionality_test/xclbin/vadd.hw.xclbin.link_summary 
+INFO: [v++ 60-791] Total elapsed time: 7h 11m 38s
 INFO: [v++ 60-1653] Closing dispatch client.
 /tools/Xilinx//Vitis/2022.1/bin/emconfigutil --nd 1 --od . --platform xilinx_u250_gen3x16_xdma_4_1_202210_1
 

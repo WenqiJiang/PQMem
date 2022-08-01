@@ -9,7 +9,7 @@
 // Variables that can be changed & should be set at compile time
 
 #define NBITS 11 // the size of a PQ code, customized number from 4 to 11
-#define M 16
+#define M 32
 
 #if NBITS == 4
 	#define LUT_ENTRY_NUM 16
