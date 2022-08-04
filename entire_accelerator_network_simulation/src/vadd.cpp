@@ -100,7 +100,7 @@ void network_input_processing(
 #pragma HLS UNROLL
                     ap_uint<32> uint_dist = reg.range(32 * (n + 1) - 1, 32 * n);
                     float float_dist = *((float*) (&uint_dist));
-                    dist_row_B.dist[n] = float_dist;
+                    dist_row_B.dist[n - 8] = float_dist;
                 }
                 s_distance_LUT.write(dist_row_B);
             } 
@@ -183,8 +183,13 @@ void network_output_processing(
     // packet 1~k: topK results_pair (vec_ID, dist) -> size = ceil(topK * 8 / 64) 
 
     // in 512-byte packets
-    int size_results = PRIORITY_QUEUE_LEN_L2 * 64 % 512 == 0?
+    const int size_results_vec_ID = PRIORITY_QUEUE_LEN_L2 * 64 % 512 == 0?
         PRIORITY_QUEUE_LEN_L2 * 64 / 512 : PRIORITY_QUEUE_LEN_L2 * 64 / 512 + 1;
+    const int size_results_dist = PRIORITY_QUEUE_LEN_L2 * 32 % 512 == 0?
+        PRIORITY_QUEUE_LEN_L2 * 32 / 512 : PRIORITY_QUEUE_LEN_L2 * 32 / 512 + 1;
+
+    ap_uint<64> vec_ID_buffer [size_results_vec_ID * (512 / 64)] = { 0 };
+    float dist_buffer[size_results_dist * (512 / 32)] = { 0 };
 
     // only write the last iteration
     for (int i = 0; i < query_num; i++) {
@@ -197,20 +202,34 @@ void network_output_processing(
         header.range(63, 32) = topK_header;
         s_kernel_network_out.write(header);
 
-        for (int j = 0; j < size_results; j++) {
+        for (int k = 0; k < TOPK; k++) {
+            result_t raw_output = s_output.read();
+            vec_ID_buffer[k] = raw_output.vec_ID;
+            dist_buffer[k] = raw_output.dist;
+        }
+
+        // send vec IDs first
+        for (int j = 0; j < size_results_vec_ID; j++) {
             ap_uint<512> pkt = 0;
 
-            for (int k = 0; k < 8; k++) {
-                int results_count = j * 8 + k;
-                if (results_count < PRIORITY_QUEUE_LEN_L2) {
-                    result_t raw_output = s_output.read();
-                    ap_uint<64> reg;
-                    int vec_ID = raw_output.vec_ID;
-                    float dist = raw_output.dist;
-                    reg.range(31, 0) = *((ap_uint<32>*) (&vec_ID));
-                    reg.range(63, 32) = *((ap_uint<32>*) (&dist));
-                    pkt.range(64 * k + 63, 64 * k);
-                }
+            for (int k = 0; k < 512 / 64; k++) {
+                
+                    ap_uint<64> vec_ID = vec_ID_buffer[j * 512 / 64 + k];
+                    pkt.range(64 * k + 63, 64 * k) = vec_ID;
+                    
+            }
+            s_kernel_network_out.write(pkt);
+        }
+
+        // then send disk
+        for (int j = 0; j < size_results_dist; j++) {
+            ap_uint<512> pkt = 0;
+
+            for (int k = 0; k < 512 / 32; k++) {
+                
+                    float dist = dist_buffer[j * 512 / 32 + k];
+                    ap_uint<32> dist_uint = *((ap_uint<32>*) (&dist));
+                    pkt.range(32 * k + 31, 32 * k) = dist_uint;
             }
             s_kernel_network_out.write(pkt);
         }
@@ -224,12 +243,15 @@ void DRAM_output_stream(
     ap_uint<512>* out_DRAM) {
 
     // header = 1 pkt
-    int size_results = PRIORITY_QUEUE_LEN_L2 * 64 % 512 == 0?
+    const int size_results_vec_ID = PRIORITY_QUEUE_LEN_L2 * 64 % 512 == 0?
         PRIORITY_QUEUE_LEN_L2 * 64 / 512 : PRIORITY_QUEUE_LEN_L2 * 64 / 512 + 1;
+    const int size_results_dist = PRIORITY_QUEUE_LEN_L2 * 32 % 512 == 0?
+        PRIORITY_QUEUE_LEN_L2 * 32 / 512 : PRIORITY_QUEUE_LEN_L2 * 32 / 512 + 1;
+    int size_results = 1 + size_results_vec_ID + size_results_dist;
     
     for (int query_id = 0; query_id < query_num; query_id++) {
-        for (int i = 0; i < size_results + 1; i++) {
-            out_DRAM[query_id * (size_results + 1) + i] = s_kernel_network_out.read();
+        for (int i = 0; i < size_results; i++) {
+            out_DRAM[query_id * size_results + i] = s_kernel_network_out.read();
         }
     }
 }

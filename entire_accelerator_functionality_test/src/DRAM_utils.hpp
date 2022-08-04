@@ -274,8 +274,8 @@ void load_distance_LUT(
             for (int row_id = 0; row_id < LUT_ENTRY_NUM; row_id++) {
 #pragma HLS pipeline II=1
                 int base_addr = (query_id * nprobe + nprobe_id) * LUT_ENTRY_NUM * 2;
-                ap_uint<512> reg_A = LUT_DRAM[base_addr + row_id];
-                ap_uint<512> reg_B = LUT_DRAM[base_addr + row_id + 1];
+                ap_uint<512> reg_A = LUT_DRAM[base_addr + 2 * row_id];
+                ap_uint<512> reg_B = LUT_DRAM[base_addr + 2 * row_id + 1];
                 for (int n = 0; n < 16; n++) {
 #pragma HLS UNROLL
                     ap_uint<32> uint_dist = reg_A.range(32 * (n + 1) - 1, 32 * n);
@@ -296,10 +296,10 @@ void load_distance_LUT(
             for (int row_id = 0; row_id < LUT_ENTRY_NUM; row_id++) {
 #pragma HLS pipeline II=1
                 int base_addr = (query_id * nprobe + nprobe_id) * LUT_ENTRY_NUM * 4;
-                ap_uint<512> reg_A = LUT_DRAM[base_addr + row_id];
-                ap_uint<512> reg_B = LUT_DRAM[base_addr + row_id + 1];
-                ap_uint<512> reg_C = LUT_DRAM[base_addr + row_id + 2];
-                ap_uint<512> reg_D = LUT_DRAM[base_addr + row_id + 3];
+                ap_uint<512> reg_A = LUT_DRAM[base_addr + 4 * row_id];
+                ap_uint<512> reg_B = LUT_DRAM[base_addr + 4 * row_id + 1];
+                ap_uint<512> reg_C = LUT_DRAM[base_addr + 4 * row_id + 2];
+                ap_uint<512> reg_D = LUT_DRAM[base_addr + 4 * row_id + 3];
                 for (int n = 0; n < 16; n++) {
 #pragma HLS UNROLL
                     ap_uint<32> uint_dist = reg_A.range(32 * (n + 1) - 1, 32 * n);
@@ -410,17 +410,18 @@ void load_nlist_init(
 void write_result(
     int query_num,
     hls::stream<result_t> &output_stream, 
-    ap_uint<64>* out_DRAM) {
+    ap_uint<96>* out_DRAM) {
 
     // only write the last iteration
     for (int i = 0; i < query_num * PRIORITY_QUEUE_LEN_L2; i++) {
 #pragma HLS pipeline II=1
         result_t raw_output = output_stream.read();
-        ap_uint<64> reg;
-        int vec_ID = raw_output.vec_ID;
+        ap_uint<96> reg;
+        ap_uint<64> vec_ID = raw_output.vec_ID;
         float dist = raw_output.dist;
-        reg.range(31, 0) = *((ap_uint<32>*) (&vec_ID));
-        reg.range(63, 32) = *((ap_uint<32>*) (&dist));
+        ap_uint<32> dist_uint = *((ap_uint<32>*) (&dist));
+        reg.range(63, 0) = vec_ID;
+        reg.range(95, 64) = dist_uint;
         out_DRAM[i] = reg;
     }
 }
