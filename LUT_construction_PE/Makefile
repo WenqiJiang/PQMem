@@ -1,9 +1,21 @@
 .PHONY: help
 
+# e.g., 
+# time make all TARGET=hw PLATFORM=xilinx_u250_gen3x16_xdma_4_1_202210_1 > out 2>&1
+
 help::
-	$(ECHO) "Makefile Usage:"
-	$(ECHO) "  make all TARGET=<sw_emu/hw_emu/hw> DEVICE=<FPGA platform> VER=<host_cpp/host_c>"
-	$(ECHO) "      Command to pick the specific files and generates the design for specified Target and Device."
+        $(ECHO) "Makefile Usage:"
+	$(ECHO) "  make all TARGET=<sw_emu/hw_emu/hw> PLATFORM=<FPGA platform>"
+	$(ECHO) "      Command to generate the design for specified Target and Device."
+	$(ECHO) ""
+	$(ECHO) "  make xclbin TARGET=<sw_emu/hw_emu/hw> PLATFORM=<FPGA platform>"
+	$(ECHO) "      Command compile just the kernel of the design for specified Target and Device."
+	$(ECHO) ""
+	$(ECHO) "  make exe TARGET=<sw_emu/hw_emu/hw> PLATFORM=<FPGA platform>"
+	$(ECHO) "      Command to generate the host application for specified Target and Device."
+	$(ECHO) ""
+	$(ECHO) "  make run TARGET=<sw_emu/hw_emu/hw> PLATFORM=<FPGA platform>"
+	$(ECHO) "      Command compile just the kernel of the design for specified Target and Device."
 	$(ECHO) ""
 	$(ECHO) "  make clean "
 	$(ECHO) "      Command to remove the generated non-hardware files."
@@ -11,165 +23,76 @@ help::
 	$(ECHO) "  make cleanall"
 	$(ECHO) "      Command to remove all the generated files."
 	$(ECHO) ""
-	$(ECHO) "  make check TARGET=<sw_emu/hw_emu/hw> DEVICE=<FPGA platform>"
-	$(ECHO) "      Command to run application in emulation."
-	$(ECHO) ""
 
-TARGETS := hw
-TARGET := $(TARGETS)
-DEVICE := $(DEVICES)
-XCLBIN := ./xclbin
-KERNEL_NAME := vadd
-VER ?= host_cpp
+# VPP := $(XILINX_VITIS)/bin/v++
+VPP := v++
+EMCONFIGUTIL := $(XILINX_VITIS)/bin/emconfigutil
+TARGET := sw_emu
+PLATFORM := xilinx_u250_gen3x16_xdma_4_1_202210_1
 
-DSA := $(call device2sandsa, $(DEVICE))
-BUILD_DIR := ./_x.$(TARGET)
+XCLBIN_DIR := ./xclbin
+TEMP_DIR := ./_x.$(TARGET)
+# sources
+KERNEL_SRC := src/vadd.cpp
+HOST_SRC := src/host.cpp
 
-BUILD_DIR_vadd = $(BUILD_DIR)/$(KERNEL_NAME)
+# targets
+HOST_EXE := host
 
-# The C++ Compiler to use: g++
-CXX := g++
+XOS := $(XCLBIN_DIR)/vadd.$(TARGET).xo
+XCLBIN := $(XCLBIN_DIR)/vadd.$(TARGET).xclbin
+EMCONFIG_FILE := ./emconfig.json
 
-# The kernel Compiler to use : V++
-VPP := $(XILINX_VITIS)/bin/v++
+VPP_COMMON_OPTS := -g -t $(TARGET) --platform $(PLATFORM) --save-temps --config connectivity.cfg
+CFLAGS := -g -std=c++11 -I$(XILINX_XRT)/include
+LFLAGS := -L$(XILINX_XRT)/lib -lxilinxopencl -pthread -lrt
+NUMDEVICES := 1
 
-# The below are compile flags are passed to the C++ Compiler
-opencl_CXXFLAGS += -g -I./ -I$(XILINX_XRT)/include -I$(XILINX_VIVADO)/include -Wall -O0 -g -std=c++11
-# The below are linking flags for C++ Comnpiler
-opencl_LDFLAGS += -L$(XILINX_XRT)/lib -lOpenCL -lpthread
+# run time args
+# EXE_OPT := vadd.$(TARGET).xclbin
 
-CXXFLAGS += $(opencl_CXXFLAGS)
-LDFLAGS += $(opencl_LDFLAGS)
+# primary build targets
+.PHONY: xclbin exe all
 
-# Host CPP FILE
-HOST_C_SRCS += src/host.c
-# Host Header FILE
-HOST_C_HDRS += src/host.h
-#Host CPP FILE
-HOST_CPP_SRCS += src/host.cpp
-# Host Header FILE
-HOST_CPP_HDRS += src/host.hpp
+xclbin: $(XCLBIN)
 
+exe: $(HOST_EXE)
 
-# Enable Profiling
-REPORT := yes
-PROFILE:= yes
-
-
-#timeline_trace is always enabled
+all: exe xclbin $(EMCONFIG_FILE)
 
 
 
-# Host compiler global settings
-CXXFLAGS += -fmessage-length=0
-LDFLAGS += -lrt -lstdc++
+# kernel rules
+$(XOS): $(KERNEL_SRC)
+# $(RM) $@
+	mkdir -p $(XCLBIN_DIR)
+	$(VPP) $(VPP_COMMON_OPTS) -c -k vadd --temp_dir $(TEMP_DIR) -o $@ $+
 
-# Kernel compiler global settings
-CLFLAGS += -t $(TARGET) --config design.cfg --save-temps
+$(XCLBIN): $(XOS)
+	mkdir -p $(XCLBIN_DIR)
+	$(VPP) $(VPP_COMMON_OPTS) -l --temp_dir $(TEMP_DIR) -o $@ $+ # $(VPP_LINK_OPTS)
 
+# host rules
+$(HOST_EXE): $(HOST_SRC)
+	g++ $(CFLAGS) -o $@ $+ $(LFLAGS)
+	@echo 'Compiled Host Executable: $(HOST_EXE)'
 
-EXECUTABLE = host
-EMCONFIG_DIR = $(XCLBIN)
+$(EMCONFIG_FILE):
+	$(EMCONFIGUTIL) --nd $(NUMDEVICES) --od . --platform $(PLATFORM)
 
-
-BINARY_CONTAINERS += $(XCLBIN)/$(KERNEL_NAME).$(TARGET).xclbin
-BINARY_CONTAINER_vadd_OBJS += $(XCLBIN)/$(KERNEL_NAME).$(TARGET).xo
-
-CP = cp -rf
-
-host_change: $(VER)
-
-.PHONY: all clean cleanall docs emconfig
-all: check-devices $(host_change) $(EXECUTABLE) $(BINARY_CONTAINERS) emconfig Makefile
-
-.PHONY: exe
-exe: $(EXECUTABLE)
-
-# Building kernel
-$(XCLBIN)/$(KERNEL_NAME).$(TARGET).xo: src/vadd.cpp
-	mkdir -p $(XCLBIN)
-	$(VPP) $(CLFLAGS) --temp_dir $(BUILD_DIR_vadd) -c -k $(KERNEL_NAME) -I'$(<D)' -o'$@' '$<'  #--from_step vpl.impl.phys_opt_design
-$(XCLBIN)/$(KERNEL_NAME).$(TARGET).xclbin: $(BINARY_CONTAINER_vadd_OBJS)
-	mkdir -p $(XCLBIN)
-	$(VPP) $(CLFLAGS) --temp_dir $(BUILD_DIR_vadd) -l $(LDCLFLAGS) -o'$@' $(+)  #--from_step vpl.impl.phys_opt_design
-
-
-ifeq ($(VER),host_cpp)
-# Building Host
-$(EXECUTABLE): $(HOST_CPP_SRCS) $(HOST_CPP_HDRS)
-	mkdir -p $(XCLBIN)
-	$(CXX) $(CXXFLAGS) $(HOST_CPP_SRCS) $(HOST_CPP_HDRS) -o '$@' $(LDFLAGS)
-else
-$(EXECUTABLE): $(HOST_C_SRCS) $(HOST_C_HDRS)
-	mkdir -p $(XCLBIN)
-	$(CXX) $(CXXFLAGS) $(HOST_C_SRCS) $(HOST_C_HDRS) -o '$@' $(LDFLAGS)
-endif
-
-emconfig:$(EMCONFIG_DIR)/emconfig.json
-$(EMCONFIG_DIR)/emconfig.json:
-	emconfigutil --platform $(DEVICE) --od $(EMCONFIG_DIR)
-
-check: all
-# e.g. make check TARGET=sw_emu DEVICE=xilinx_u280_xdma_201920_1 VER=host_cpp
-ifeq ($(VER),host_cpp)
-# sw / hw emulation
+run: $(XCLBIN) $(HOST_EXE) $(EMCONFIG_FILE)
 ifeq ($(TARGET),$(filter $(TARGET),sw_emu hw_emu))
-	$(CP) $(EMCONFIG_DIR)/emconfig.json .
-	XCL_EMULATION_MODE=$(TARGET) ./$(EXECUTABLE) $(XCLBIN)/$(KERNEL_NAME).$(TARGET).xclbin
-#$(DEVICE)
-# hw -> FPGA
+	export XCL_EMULATION_MODE=${TARGET}; ./$(HOST_EXE) $(XCLBIN)
 else
-	 ./$(EXECUTABLE) $(XCLBIN)/$(KERNEL_NAME).$(TARGET).xclbin
-#$(DEVICE)
-endif
-# else, VER!=host_cpp
-else
-ifeq ($(TARGET),$(filter $(TARGET),sw_emu hw_emu))
-	$(CP) $(EMCONFIG_DIR)/emconfig.json .
-	XCL_EMULATION_MODE=$(TARGET) ./$(EXECUTABLE) $(XCLBIN)/$(KERNEL_NAME).$(TARGET).xclbin $(DEVICE)
-else
-	 ./$(EXECUTABLE) $(XCLBIN)/$(KERNEL_NAME).$(TARGET).xclbin $(DEVICE)
-endif
+	./$(HOST_EXE) $(XCLBIN)
 endif
 
 
-
-# Cleaning stuff
-RMDIR = rm -rf
+.PHONY: clean cleanall
 
 clean:
-	-$(RMDIR) $(EXECUTABLE) $(XCLBIN)/{*sw_emu*,*hw_emu*}
-	-$(RMDIR) TempConfig system_estimate.xtxt *.rpt
-	-$(RMDIR) *.protoinst _v++_* .Xil emconfig.json dltmp* xmltmp* *.log *.jou
-
+	-$(RM) $(EMCONFIG_FILE) $(HOST_EXE) $(XCLBIN) *.xclbin *.xo $(XOS) *.log *.csv *summary *.json *.xml
+	
 cleanall: clean
-	-$(RMDIR) $(XCLBIN)
-	-$(RMDIR) _x.*
-
-
-check-devices:
-ifndef DEVICE
-	$(error DEVICE not set. Please set the DEVICE properly and rerun. Run "make help" for more details.)
-endif
-
-check_xrt:
-ifndef XILINX_XRT
-	$(error XILINX_XRT variable is not set, please set correctly and rerun)
-endif
-
-
-ECHO := @echo
-
-#'estimate' for estimate report generation
-#'system' for system report generation
-ifneq ($(REPORT), no)
-CLFLAGS += --report estimate
-CLLDFLAGS += --report system
-endif
-
-#Generates profile summary report
-ifeq ($(PROFILE), yes)
-LDCLFLAGS += --profile_kernel data:all:all:all:all
-LDCFLAGS += --profile_kernel  stall:all:all:all:all
-LDCFALGS += --profile_kernel exec:all:all:all:all
-endif
+	-$(RM) -r _x.* .Xil .run
+	-$(RM) -r $(XCLBIN_DIR)

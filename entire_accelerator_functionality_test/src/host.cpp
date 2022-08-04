@@ -199,7 +199,7 @@ int main(int argc, char** argv)
     auto start_load = std::chrono::high_resolution_clock::now();
 
     // in init
-    size_t query_num = 100;
+    size_t query_num = 10000;
     size_t nlist = 32768;
     size_t nprobe = 32;
 
@@ -511,10 +511,10 @@ int main(int argc, char** argv)
         std::nth_element(dist_array.begin(), dist_array.begin() + nprobe, dist_array.end()); // get nprobe smallest
         std::sort(dist_array.begin(), dist_array.begin() + nprobe); // sort first nprobe
         // std::sort(dist_array.begin(), dist_array.end()); // full sort is slower
-        std::cout << "first nprobe: \n";
+        //std::cout << "first nprobe: \n";
         for (size_t n = 0; n < nprobe; n++) {
             cell_ID_DRAM[query_id * nprobe + n] = dist_array[n].second;
-            std::cout << "dist: " << dist_array[n].first << " cell ID: " << dist_array[n].second << "\n";
+            // std::cout << "dist: " << dist_array[n].first << " cell ID: " << dist_array[n].second << "\n";
         } 
 
         // std::cout << " 3\n";
