@@ -158,7 +158,7 @@ void LUT_construction_sub_PE(
     for (int k = 0; k < LUT_ENTRY_NUM; k++) {
         for (int j = 0; j < D / M; j++) {
 #pragma HLS pipeline II=1
-            sub_product_quantizer[k][j] = s_sub_product_quantizer_init_sub_PE.read();
+            sub_product_quantizer[k][j] = s_product_quantizer_init_sub_PE.read();
         }
     }
 
