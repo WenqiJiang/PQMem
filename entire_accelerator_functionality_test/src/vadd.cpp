@@ -32,7 +32,7 @@ void vadd(
     ap_uint<64>* vec_ID_DRAM_3,
 
     // out
-    ap_uint<96>* out_DRAM)
+    ap_uint<512>* out_DRAM)
 {
 // Share the same AXI interface with several control signals (but they are not allowed in same dataflow)
 //    https://docs.xilinx.com/r/en-US/ug1399-vitis-hls/Controlling-AXI4-Burst-Behavior

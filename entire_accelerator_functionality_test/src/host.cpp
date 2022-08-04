@@ -232,7 +232,12 @@ int main(int argc, char** argv)
     std::vector<int ,aligned_allocator<int >> vec_ID_DRAM_3(vec_ID_DRAM_3_size / sizeof(int));
     
     // out
-    size_t out_bytes = query_num * 3 * TOPK * sizeof(int); // vec_ID 8 bytes + dist 4 bytes
+    size_t size_results_vec_ID = PRIORITY_QUEUE_LEN_L2 * 64 % 512 == 0?
+        PRIORITY_QUEUE_LEN_L2 * 64 / 512 : PRIORITY_QUEUE_LEN_L2 * 64 / 512 + 1;
+    size_t size_results_dist = PRIORITY_QUEUE_LEN_L2 * 32 % 512 == 0?
+        PRIORITY_QUEUE_LEN_L2 * 32 / 512 : PRIORITY_QUEUE_LEN_L2 * 32 / 512 + 1;
+    size_t size_results = size_results_vec_ID + size_results_dist; // in 512-bit packet
+    size_t out_bytes = query_num * 64 * size_results;
     std::vector<int ,aligned_allocator<int>> out(out_bytes / sizeof(int));
 
     // the raw ground truth size is the same for idx_1M.ivecs, idx_10M.ivecs, idx_100M.ivecs
@@ -364,47 +369,47 @@ int main(int argc, char** argv)
     memcpy(&nlist_init[2 * nlist], nlist_num_vecs_char, nlist_num_vecs_size);
     free(nlist_num_vecs_char);
 
-    std::cout << "\n nlist_PQ_codes_start_addr (last cell): " << nlist_init[1 * nlist - 1];
-    std::cout << "\n nlist_vec_ID_start_addr (last cell): " << nlist_init[2 * nlist - 1];
-    std::cout << "\n nlist_num_vecs (last cell): " << nlist_init[3 * nlist - 1];
+    // std::cout << "\n nlist_PQ_codes_start_addr (last cell): " << nlist_init[1 * nlist - 1];
+    // std::cout << "\n nlist_vec_ID_start_addr (last cell): " << nlist_init[2 * nlist - 1];
+    // std::cout << "\n nlist_num_vecs (last cell): " << nlist_init[3 * nlist - 1];
 
-    // DEBUG: check whether PQ codes are correct
-    int cell = 5766;
-    int addr = nlist_init[cell];
-    int addr_int_array = addr * 64 / 4;
+    // // DEBUG: check whether PQ codes are correct
+    // int cell = 5766;
+    // int addr = nlist_init[cell];
+    // int addr_int_array = addr * 64 / 4;
     
-    std::cout << "cell ID for debug: " << cell << "\n";
-    std::cout << "PQ codes addr (AXI entry): " << addr << " ; in int array: " << addr_int_array << "\n";
+    // std::cout << "cell ID for debug: " << cell << "\n";
+    // std::cout << "PQ codes addr (AXI entry): " << addr << " ; in int array: " << addr_int_array << "\n";
 
-    unsigned char* PQ_code_tmp_0 = (unsigned char*) malloc(M);
-    unsigned char* PQ_code_tmp_1 = (unsigned char*) malloc(M);
-    unsigned char* PQ_code_tmp_2 = (unsigned char*) malloc(M);
-    unsigned char* PQ_code_tmp_3 = (unsigned char*) malloc(M);
-    memcpy(PQ_code_tmp_0, &PQ_codes_DRAM_0[addr_int_array], M);
-    memcpy(PQ_code_tmp_1, &PQ_codes_DRAM_1[addr_int_array], M);
-    memcpy(PQ_code_tmp_2, &PQ_codes_DRAM_2[addr_int_array], M);
-    memcpy(PQ_code_tmp_3, &PQ_codes_DRAM_3[addr_int_array], M);
+    // unsigned char* PQ_code_tmp_0 = (unsigned char*) malloc(M);
+    // unsigned char* PQ_code_tmp_1 = (unsigned char*) malloc(M);
+    // unsigned char* PQ_code_tmp_2 = (unsigned char*) malloc(M);
+    // unsigned char* PQ_code_tmp_3 = (unsigned char*) malloc(M);
+    // memcpy(PQ_code_tmp_0, &PQ_codes_DRAM_0[addr_int_array], M);
+    // memcpy(PQ_code_tmp_1, &PQ_codes_DRAM_1[addr_int_array], M);
+    // memcpy(PQ_code_tmp_2, &PQ_codes_DRAM_2[addr_int_array], M);
+    // memcpy(PQ_code_tmp_3, &PQ_codes_DRAM_3[addr_int_array], M);
 
-    std::cout << "\nCode channel 0:";
-    for (int i = 0; i < M; i ++) {
-        unsigned int tmp = PQ_code_tmp_0[i];
-        std::cout << " " << tmp;
-    }
-    std::cout << "\nCode channel 1:";
-    for (int i = 0; i < M; i ++) {
-        unsigned int tmp = PQ_code_tmp_1[i];
-        std::cout << " " << tmp;
-    }
-    std::cout << "\nCode channel 2:";
-    for (int i = 0; i < M; i ++) {
-        unsigned int tmp = PQ_code_tmp_2[i];
-        std::cout << " " << tmp;
-    }
-    std::cout << "\nCode channel 3:";
-    for (int i = 0; i < M; i ++) {
-        unsigned int tmp = PQ_code_tmp_3[i];
-        std::cout << " " << tmp;
-    }
+    // std::cout << "\nCode channel 0:";
+    // for (int i = 0; i < M; i ++) {
+    //     unsigned int tmp = PQ_code_tmp_0[i];
+    //     std::cout << " " << tmp;
+    // }
+    // std::cout << "\nCode channel 1:";
+    // for (int i = 0; i < M; i ++) {
+    //     unsigned int tmp = PQ_code_tmp_1[i];
+    //     std::cout << " " << tmp;
+    // }
+    // std::cout << "\nCode channel 2:";
+    // for (int i = 0; i < M; i ++) {
+    //     unsigned int tmp = PQ_code_tmp_2[i];
+    //     std::cout << " " << tmp;
+    // }
+    // std::cout << "\nCode channel 3:";
+    // for (int i = 0; i < M; i ++) {
+    //     unsigned int tmp = PQ_code_tmp_3[i];
+    //     std::cout << " " << tmp;
+    // }
 
     // ground truth
     char* raw_gt_vec_ID_char = (char*) malloc(raw_gt_vec_ID_size);
@@ -517,7 +522,7 @@ int main(int argc, char** argv)
         for (size_t nprobe_id = 0; nprobe_id < nprobe; nprobe_id++) {
 
         // std::cout << " 4\n";
-            int cell_ID = dist_array[nprobe_id].second;
+            size_t cell_ID = dist_array[nprobe_id].second;
             // std::cout << "cell_ID" << cell_ID  << "\n";
             std::vector<float> diff_vec(D); // query_vec - centroid 
 
@@ -666,7 +671,7 @@ int main(int argc, char** argv)
     auto end_kernel = std::chrono::high_resolution_clock::now();
     double duration_kernel = (std::chrono::duration_cast<std::chrono::milliseconds>(end_kernel - start_kernel).count());
 
-    std::cout << "Duration FPGA kernel: " << duration_kernel << " millisec" << std::endl; 
+    std::cout << "Duration FPGA kernel (include memcpy back): " << duration_kernel << " millisec" << std::endl; 
 
 // OPENCL HOST CODE AREA END
 
@@ -680,30 +685,24 @@ int main(int argc, char** argv)
 
     for (int query_id = 0; query_id < query_num; query_id++) {
 
-        std::cout << "query ID: " << query_id << std::endl;
-        
-        std::vector<uint64_t> hw_result_vec_ID_partial(TOPK, 0);
+        // std::cout << "query ID: " << query_id << std::endl;
+
+        std::vector<long> hw_result_vec_ID_partial(TOPK, 0);
         std::vector<float> hw_result_dist_partial(TOPK, 0);
 
-        // Load data
-        for (int k = 0; k < TOPK; k++) {
+        int start_result_vec_ID_addr = (query_id * size_results) * 64 / sizeof(int);
+        int start_result_dist_addr = (query_id * size_results + size_results_vec_ID) * 64 / sizeof(int);
 
-            // out = int type (vec_ID, dist)
-            uint64_t vec_ID = *((uint64_t*) (&out[3 * (query_id * TOPK + k)]));
-            // uint32_t vec_ID = *((uint64_t*) (&out[3 * (query_id * TOPK + k) + 1]));
-            float dist = *((float*) (&out[3 * (query_id * TOPK + k) + 2]));
-            // memcpy(&hw_result_vec_ID_partial[k], &out[3 * (query_id * TOPK + k)], 8);
-            // memcpy(&hw_result_dist_partial[k], &out[3 * (query_id * TOPK + k) + 2], 4);
-            hw_result_vec_ID_partial[k] = vec_ID;
-            hw_result_dist_partial[k] = dist;
-        }
+        // Load data
+        memcpy(&hw_result_vec_ID_partial[0], &out[start_result_vec_ID_addr], 8 * TOPK);
+        memcpy(&hw_result_dist_partial[0], &out[start_result_dist_addr], 4 * TOPK);
         
         // Check correctness
         count++;
         // std::cout << "query id" << query_id << std::endl;
         for (int k = 0; k < TOPK; k++) {
-            std::cout << "hw: " << hw_result_vec_ID_partial[k] << " gt: " << gt_vec_ID[query_id] << 
-                " hw dist: " << hw_result_dist_partial[k] << " gt dist: " << gt_dist[query_id] << std::endl;
+            // std::cout << "hw: " << hw_result_vec_ID_partial[k] << " gt: " << gt_vec_ID[query_id] << 
+            //     "hw dist: " << hw_result_dist_partial[k] << " gt dist: " << gt_dist[query_id] << std::endl;
             if (hw_result_vec_ID_partial[k] == gt_vec_ID[query_id]) {
                 match_count++;
                 break;

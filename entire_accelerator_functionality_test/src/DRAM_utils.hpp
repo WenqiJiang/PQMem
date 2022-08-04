@@ -71,8 +71,8 @@ void load_nlist_vec_ID_start_addr(
 
 void write_result(
     int query_num,
-    hls::stream<result_t> &output_stream, 
-    ap_uint<64>* out_DRAM);
+    hls::stream<result_t> &s_output, 
+    ap_uint<96>* out_DRAM);
 
 
 void get_cell_addr_and_size(
@@ -409,21 +409,55 @@ void load_nlist_init(
 
 void write_result(
     int query_num,
-    hls::stream<result_t> &output_stream, 
-    ap_uint<96>* out_DRAM) {
+    hls::stream<result_t> &s_output, 
+    ap_uint<512>* out_DRAM) {
+
+    // in 512-byte packets
+    const int size_results_vec_ID = PRIORITY_QUEUE_LEN_L2 * 64 % 512 == 0?
+        PRIORITY_QUEUE_LEN_L2 * 64 / 512 : PRIORITY_QUEUE_LEN_L2 * 64 / 512 + 1;
+    const int size_results_dist = PRIORITY_QUEUE_LEN_L2 * 32 % 512 == 0?
+        PRIORITY_QUEUE_LEN_L2 * 32 / 512 : PRIORITY_QUEUE_LEN_L2 * 32 / 512 + 1;
+    const int size_results = size_results_vec_ID + size_results_dist;
+
+    ap_uint<64> vec_ID_buffer [size_results_vec_ID * (512 / 64)] = { 0 };
+    float dist_buffer[size_results_dist * (512 / 32)] = { 0 };
 
     // only write the last iteration
-    for (int i = 0; i < query_num * PRIORITY_QUEUE_LEN_L2; i++) {
+    for (int i = 0; i < query_num; i++) {
 #pragma HLS pipeline II=1
-        result_t raw_output = output_stream.read();
-        ap_uint<96> reg;
-        ap_uint<64> vec_ID = raw_output.vec_ID;
-        float dist = raw_output.dist;
-        ap_uint<32> dist_uint = *((ap_uint<32>*) (&dist));
-        reg.range(63, 0) = vec_ID;
-        reg.range(95, 64) = dist_uint;
-        out_DRAM[i] = reg;
-    }
+
+        for (int k = 0; k < TOPK; k++) {
+            result_t raw_output = s_output.read();
+            vec_ID_buffer[k] = raw_output.vec_ID;
+            dist_buffer[k] = raw_output.dist;
+        }
+
+        // send vec IDs first
+        for (int j = 0; j < size_results_vec_ID; j++) {
+            ap_uint<512> pkt = 0;
+
+            for (int k = 0; k < 512 / 64; k++) {
+                
+                    ap_uint<64> vec_ID = vec_ID_buffer[j * 512 / 64 + k];
+                    pkt.range(64 * k + 63, 64 * k) = vec_ID;
+                    
+            }
+            out_DRAM[i * size_results + j] = pkt;
+        }
+
+        // then send disk
+        for (int j = 0; j < size_results_dist; j++) {
+            ap_uint<512> pkt = 0;
+
+            for (int k = 0; k < 512 / 32; k++) {
+                
+                    float dist = dist_buffer[j * 512 / 32 + k];
+                    ap_uint<32> dist_uint = *((ap_uint<32>*) (&dist));
+                    pkt.range(32 * k + 31, 32 * k) = dist_uint;
+            }
+            out_DRAM[i * size_results + size_results_vec_ID + j] = pkt;
+        }
+    } 
 }
 
 

@@ -383,7 +383,7 @@ int main(int argc, char** argv)
     // std::cout << "\n nlist_vec_ID_start_addr (last cell): " << nlist_init[2 * nlist - 1];
     // std::cout << "\n nlist_num_vecs (last cell): " << nlist_init[3 * nlist - 1];
 
-    // DEBUG: check whether PQ codes are correct
+    // // DEBUG: check whether PQ codes are correct
     // int cell = 5766;
     // int addr = nlist_init[cell];
     // int addr_int_array = addr * 64 / 4;
