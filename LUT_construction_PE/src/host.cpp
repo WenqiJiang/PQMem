@@ -15,29 +15,32 @@ int main(int argc, char** argv)
     // create buffer using CL_MEM_USE_HOST_PTR to align user buffer to page boundary. It will 
     // ensure that user buffer is used when user create Buffer/Mem object with CL_MEM_USE_HOST_PTR 
 
+    std::cout << "Allocating memory" << std::endl;
+
     size_t query_num = 1000;
     size_t nprobe = 32;
 
-    size_t product_quantizer_bytes = D * M * sizeof(float);
+    size_t product_quantizer_bytes = D * LUT_ENTRY_NUM * sizeof(float);
     std::vector<float ,aligned_allocator<float >> product_quantizer(product_quantizer_bytes / sizeof(float));
     // reshape for software
     std::vector<float ,aligned_allocator<float >> product_quantizer_reshaped(product_quantizer_bytes / sizeof(float));
 
     // query format: store in 512-bit packets, pad 0 for the last packet if needed
-    const int size_query_vector = D * 4 % 64 == 0? D * 4 / 64: D * 4 / 64 + 1; 
+    const size_t size_query_vector = D * 4 % 64 == 0? D * 4 / 64: D * 4 / 64 + 1; 
     size_t query_vector_bytes = query_num * size_query_vector * 64;
     std::vector<float ,aligned_allocator<float >> query_vectors(query_vector_bytes / sizeof(float));
 
-    const int size_center_vector = D * 4 % 64 == 0? D * 4 / 64: D * 4 / 64 + 1; 
+    const size_t size_center_vector = D * 4 % 64 == 0? D * 4 / 64: D * 4 / 64 + 1; 
     size_t center_vector_bytes = query_num * nprobe * size_center_vector * 64;
     std::vector<float ,aligned_allocator<float >> center_vectors(center_vector_bytes / sizeof(float));
 
     size_t out_bytes = query_num * nprobe * LUT_ENTRY_NUM * M * sizeof(float);
-    std::vector<float ,aligned_allocator<float>> out(out_bytes);
+    std::vector<float ,aligned_allocator<float>> out(out_bytes / sizeof(float));
 
 
     // init 
     // M * 256 * D/M
+    // std::cout << "1\n";
     for (int i = 0; i < D * LUT_ENTRY_NUM; i++) {
         product_quantizer[i] = i % LUT_ENTRY_NUM;
     }    
@@ -51,6 +54,7 @@ int main(int argc, char** argv)
         }
     }
 
+    // std::cout << "2\n";
     float query_vec_data[D] =  {9, 26, -34, -2, -83, -17, 6, 23, -43, -4, 13, 26, -53, -27, -68, 74, 11, 
         53, -17, -22, 64, -4, -32, -51, -45, 95, -98, -16, -61, -34, -16, -53, 89, 76, 35, 5, -1, 
         24, -8, 80, 2, -3, 18, -6, 55, -66, -24, 68, 31, 6, -31, -36, -25, 62, -42, 38, -78, 46, -85, 
@@ -65,6 +69,7 @@ int main(int argc, char** argv)
         }
     }
 
+    // std::cout << "3\n";
     float center_vec_data[D] = {55, 1, 71, -11, -58, 56, 10, -21, 22, -40, -55, 65, 67, -89, -23, 97, 
         -16, -66, -34, 7, 4, -96, -92, -38, 2, -84, -59, 38, -28, -56, -65, 18, 12, 76, 79, -47, 
         22, 25, 50, 63, 84, 50, -15, 34, -56, -56, -51, 71, 39, -79, -10, 10, -24, -38, -80, 17, 
@@ -98,7 +103,7 @@ int main(int argc, char** argv)
                     (diff_vec[m * D / M + c] - product_quantizer_reshaped[row_id * D + m * D / M + c]) * 
                     (diff_vec[m * D / M + c] - product_quantizer_reshaped[row_id * D + m * D / M + c]);
             }
-            LUT[row_id * M + m] = *((int*) (&dist));
+            LUT[row_id * M + m] = dist;
             // std::cout << "row: " << row_id << " col (m): " << m << " dist: " << dist << std::endl;
         }
     }
