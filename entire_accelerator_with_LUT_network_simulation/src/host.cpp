@@ -5,10 +5,13 @@
 #include <unistd.h>
 #include <limits>
 #include <assert.h>
+#include <string>
 
 #include "constants.hpp"
 // Wenqi: seems 2022.1 somehow does not support linking ap_uint.h to host?
 // #include "ap_uint.h"
+
+// #define DEBUG
 
 // boost::filesystem does not compile well, so implement this myself
 std::string dir_concat(std::string dir1, std::string dir2) {
@@ -21,6 +24,10 @@ std::string dir_concat(std::string dir1, std::string dir2) {
 int main(int argc, char** argv)
 {
     cl_int err;
+    std::string db_name = "SIFT1000M";
+    // std::string db_name = "SIFT100M";
+    std::cout << "DB name: " << db_name << std::endl;
+
     // Allocate Memory in Host Memory
     // When creating a buffer with user pointer (CL_MEM_USE_HOST_PTR), under the hood user ptr 
     // is used if it is properly aligned. when not aligned, runtime had no choice but to create
@@ -28,8 +35,13 @@ int main(int argc, char** argv)
     // create buffer using CL_MEM_USE_HOST_PTR to align user buffer to page boundary. It will 
     // ensure that user buffer is used when user create Buffer/Mem object with CL_MEM_USE_HOST_PTR 
 
-
-    std::string data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/SIFT100M_IVF32768,PQ32";
+    std::string data_dir_prefix;
+    if (db_name == "SIFT100M") {
+        data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/SIFT100M_IVF32768,PQ32";
+    }
+    else if (db_name == "SIFT1000M") {
+        data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/SIFT1000M_IVF32768,PQ32";
+    }
     std::string gnd_dir = "/mnt/scratch/wenqi/Faiss_experiments/bigann/gnd/";
 
     ///////////     get data size from disk     //////////
@@ -158,13 +170,25 @@ int main(int argc, char** argv)
     product_quantizer_fstream.seekg(0, product_quantizer_fstream.beg);
 
     // ground truth 
-    std::string raw_gt_vec_ID_suffix_dir = "idx_100M.ivecs";
+    std::string raw_gt_vec_ID_suffix_dir;
+    if (db_name == "SIFT100M") {
+        raw_gt_vec_ID_suffix_dir = "idx_100M.ivecs";
+    }
+    else if (db_name == "SIFT1000M") {
+        raw_gt_vec_ID_suffix_dir = "idx_1000M.ivecs";
+    }
     std::string raw_gt_vec_ID_dir = dir_concat(gnd_dir, raw_gt_vec_ID_suffix_dir);
     std::ifstream raw_gt_vec_ID_fstream(
         raw_gt_vec_ID_dir,
         std::ios::in | std::ios::binary);
 
-    std::string raw_gt_dist_suffix_dir = "dis_100M.fvecs";
+    std::string raw_gt_dist_suffix_dir;
+    if (db_name == "SIFT100M") {
+        raw_gt_dist_suffix_dir = "dis_100M.fvecs";
+    }
+    else if (db_name == "SIFT1000M") {
+        raw_gt_dist_suffix_dir = "dis_1000M.fvecs";
+    }
     std::string raw_gt_dist_dir = dir_concat(gnd_dir, raw_gt_dist_suffix_dir);
     std::ifstream raw_gt_dist_fstream(
         raw_gt_dist_dir,
@@ -509,7 +533,9 @@ int main(int argc, char** argv)
         // write cell ID
         for (size_t n = 0; n < nprobe; n++) {
             in_DRAM[start_addr_in_DRAM_cell_ID + n] = dist_array[n].second;
-            // std::cout << "dist: " << dist_array[n].first << " cell ID: " << dist_array[n].second << "\n";
+#ifdef DEBUG
+            std::cout << "dist: " << dist_array[n].first << " cell ID: " << dist_array[n].second << "\n";
+#endif
         } 
 
         // write query vector
@@ -658,7 +684,9 @@ int main(int argc, char** argv)
 
     for (int query_id = 0; query_id < query_num; query_id++) {
 
-        // std::cout << "query ID: " << query_id << std::endl;
+#ifdef DEBUG
+        std::cout << "query ID: " << query_id << std::endl;
+#endif
 
         std::vector<long> hw_result_vec_ID_partial(TOPK, 0);
         std::vector<float> hw_result_dist_partial(TOPK, 0);
@@ -672,10 +700,11 @@ int main(int argc, char** argv)
         
         // Check correctness
         count++;
-        // std::cout << "query id" << query_id << std::endl;
         for (int k = 0; k < TOPK; k++) {
-            // std::cout << "hw: " << hw_result_vec_ID_partial[k] << " gt: " << gt_vec_ID[query_id] << 
-            //     "hw dist: " << hw_result_dist_partial[k] << " gt dist: " << gt_dist[query_id] << std::endl;
+#ifdef DEBUG
+            std::cout << "hw: " << hw_result_vec_ID_partial[k] << " gt: " << gt_vec_ID[query_id] << 
+                "hw dist: " << hw_result_dist_partial[k] << " gt dist: " << gt_dist[query_id] << std::endl;
+#endif
             if (hw_result_vec_ID_partial[k] == gt_vec_ID[query_id]) {
                 match_count++;
                 break;
@@ -685,6 +714,27 @@ int main(int argc, char** argv)
     float recall = ((float) match_count / (float) count);
     printf("\n=====  Recall: %.8f  =====\n", recall);
 
+
+#ifdef DEBUG
+    for (int query_id = 0; query_id < query_num; query_id++) {
+
+        std::vector<long> hw_result_vec_ID_partial(TOPK, 0);
+        std::vector<float> hw_result_dist_partial(TOPK, 0);
+
+        int start_result_vec_ID_addr = (query_id * size_results + 1) * 64 / sizeof(int);
+        int start_result_dist_addr = (query_id * size_results + 1 + size_results_vec_ID) * 64 / sizeof(int);
+
+        // Load data
+        memcpy(&hw_result_vec_ID_partial[0], &out[start_result_vec_ID_addr], 8 * TOPK);
+        memcpy(&hw_result_dist_partial[0], &out[start_result_dist_addr], 4 * TOPK);
+        
+        // Check correctness
+        for (int k = 0; k < TOPK; k++) {
+            assert(hw_result_vec_ID_partial[k] != LARGE_NUM);
+            assert(hw_result_vec_ID_partial[k] != LARGE_NUM + 1);
+        } 
+    }
+#endif
 
     std::cout << "TEST FINISHED" << std::endl; 
 
