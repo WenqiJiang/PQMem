@@ -51,17 +51,10 @@ class Priority_queue_L2<result_t, queue_size, Collect_smallest> {
                     compare_swap_array_step_B(queue);
                 }
 
-                // fully-sort the results
-                for (int i = 0; i < queue_size + 1; i++) {
-#pragma HLS pipeline II=1
-                    compare_swap_array_step_A(queue);
-                    compare_swap_array_step_B(queue);
-                }
-
-                // write, smaller (rightmost) first
+                // write
                 for (int i = 1; i < queue_size + 1; i++) {
 #pragma HLS pipeline II=1
-                    s_output.write(queue[queue_size + 1 - i]);
+                    s_output.write(queue[i]);
                 }
             }
         }
