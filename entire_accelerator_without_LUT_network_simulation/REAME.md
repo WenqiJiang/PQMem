@@ -1,6 +1,6 @@
-# entire_accelerator_network_simulation
+# entire_accelerator_without_LUT_network_simulation
 
-This is the functionality test of entire accelerator (send LUT from one of the DRAM channels, thus performance is suboptimal), for perf test, see entire_accelerator_perf_test. 
+This is the functionality test of entire accelerator without LUT construction PE (send LUT from one of the DRAM channels, thus performance is suboptimal), for perf test, see entire_accelerator_perf_test. 
 
 This project simulates the situation that query_id, cell_IDs, and LUTs are streamed in from network, and the results are streamed out to network.
 

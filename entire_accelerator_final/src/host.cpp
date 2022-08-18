@@ -737,10 +737,13 @@ int main(int argc, char** argv)
 
     // Compare the results of the Device to the ground truth
     std::cout << "Comparing Results..." << std::endl;
-    bool match = true;
-    int count = 0;
-    int match_count = 0;
-
+    
+    int match_count_R1_at_1 = 0;
+    int match_count_R1_at_10 = 0;
+    int match_count_R1_at_100 = 0;
+    int match_count_R_at_1 = 0;
+    int match_count_R_at_10 = 0;
+    int match_count_R_at_100 = 0;
 
     for (int query_id = 0; query_id < query_num; query_id++) {
 
@@ -748,31 +751,93 @@ int main(int argc, char** argv)
         std::cout << "query ID: " << query_id << std::endl;
 #endif
 
+
         std::vector<long> hw_result_vec_ID_partial(TOPK, 0);
         std::vector<float> hw_result_dist_partial(TOPK, 0);
+        std::vector<std::pair<float, int>> hw_result_pair(TOPK);
 
-        int start_result_vec_ID_addr = (query_id * size_results + 1) * 64 / sizeof(int);
-        int start_result_dist_addr = (query_id * size_results + 1 + size_results_vec_ID) * 64 / sizeof(int);
+        int start_result_vec_ID_addr = (query_id * size_results + 1) * 64;
+        int start_result_dist_addr = (query_id * size_results + 1 + size_results_vec_ID) * 64;
 
         // Load data
         memcpy(&hw_result_vec_ID_partial[0], &out[start_result_vec_ID_addr], 8 * TOPK);
         memcpy(&hw_result_dist_partial[0], &out[start_result_dist_addr], 4 * TOPK);
-        
-        // Check correctness
-        count++;
         for (int k = 0; k < TOPK; k++) {
-#ifdef DEBUG
-            std::cout << "hw: " << hw_result_vec_ID_partial[k] << " gt: " << gt_vec_ID[query_id] << 
-                "hw dist: " << hw_result_dist_partial[k] << " gt dist: " << gt_dist[query_id] << std::endl;
-#endif
-            if (hw_result_vec_ID_partial[k] == gt_vec_ID[query_id]) {
-                match_count++;
+            hw_result_pair[k] = std::make_pair(hw_result_dist_partial[k], hw_result_vec_ID_partial[k]);
+        }
+        std::sort(hw_result_pair.begin(), hw_result_pair.end());
+        for (int k = 0; k < TOPK; k++) {
+            hw_result_dist_partial[k] = hw_result_pair[k].first;
+            hw_result_vec_ID_partial[k] = hw_result_pair[k].second;
+        }
+        
+
+        int start_addr_gt = query_id * 1001 + 1;
+
+        // R1@K
+        for (int k = 0; k < 1; k++) {
+            if (hw_result_vec_ID_partial[k] == raw_gt_vec_ID[start_addr_gt]) {
+                match_count_R1_at_1++;
                 break;
             }
         } 
+        for (int k = 0; k < 10; k++) {
+            if (hw_result_vec_ID_partial[k] == raw_gt_vec_ID[start_addr_gt]) {
+                match_count_R1_at_10++;
+                break;
+            }
+        } 
+        for (int k = 0; k < TOPK; k++) {
+#ifdef DEBUG
+            // std::cout << "hw: " << hw_result_vec_ID_partial[k] << " gt: " << gt_vec_ID[query_id] << 
+            //     "hw dist: " << hw_result_dist_partial[k] << " gt dist: " << gt_dist[query_id] << std::endl;
+#endif 
+            if (hw_result_vec_ID_partial[k] == raw_gt_vec_ID[start_addr_gt]) {
+                match_count_R1_at_100++;
+                break;
+            }
+        } 
+
+        // R@K
+        std::unordered_set<size_t> gt_set;
+        for (int k = 0; k < 1; k++) {
+            gt_set.insert(raw_gt_vec_ID[start_addr_gt + k]);
+        }
+        for (int k = 0; k < 1; k++) {
+            // count actually means contain here...
+            // https://stackoverflow.com/questions/42532550/why-does-stdset-not-have-a-contains-member-function
+            if (gt_set.count(hw_result_vec_ID_partial[k])) { 
+                match_count_R_at_1++;
+            }
+        }
+        for (int k = 0; k < 10; k++) {
+            gt_set.insert(raw_gt_vec_ID[start_addr_gt + k]);
+        }
+        for (int k = 0; k < 10; k++) {
+            // count actually means contain here...
+            // https://stackoverflow.com/questions/42532550/why-does-stdset-not-have-a-contains-member-function
+            if (gt_set.count(hw_result_vec_ID_partial[k])) { 
+                match_count_R_at_10++;
+            }
+        }
+        for (int k = 0; k < 100; k++) {
+            gt_set.insert(raw_gt_vec_ID[start_addr_gt + k]);
+        }
+        for (int k = 0; k < 100; k++) {
+            // count actually means contain here...
+            // https://stackoverflow.com/questions/42532550/why-does-stdset-not-have-a-contains-member-function
+            if (gt_set.count(hw_result_vec_ID_partial[k])) { 
+                match_count_R_at_100++;
+            }
+        }
     }
-    float recall = ((float) match_count / (float) count);
-    printf("\n=====  Recall: %.8f  =====\n", recall);
+
+    std::cout << "R1@1: " << float(match_count_R1_at_1) / query_num << std::endl;
+    std::cout << "R1@10: " << float(match_count_R1_at_10) / query_num << std::endl;
+    std::cout << "R1@100: " << float(match_count_R1_at_100) / query_num << std::endl;
+    std::cout << "R@1: " << float(match_count_R_at_1) / (query_num * 1) << std::endl;
+    std::cout << "R@10: " << float(match_count_R_at_10) / (query_num * 10) << std::endl;
+    std::cout << "R@100: " << float(match_count_R_at_100) / (query_num * 100) << std::endl;
 
 
 #ifdef DEBUG
