@@ -230,7 +230,7 @@ int main(int argc, char** argv)
     // in init
     size_t query_num = 10000;
     size_t nlist = 32768;
-    size_t nprobe = 32;
+    size_t nprobe = 8;
 
     assert (nprobe <= nlist);
 
@@ -756,8 +756,8 @@ int main(int argc, char** argv)
         std::vector<float> hw_result_dist_partial(TOPK, 0);
         std::vector<std::pair<float, int>> hw_result_pair(TOPK);
 
-        int start_result_vec_ID_addr = (query_id * size_results + 1) * 64;
-        int start_result_dist_addr = (query_id * size_results + 1 + size_results_vec_ID) * 64;
+        int start_result_vec_ID_addr = (query_id * size_results + 1) * 64 / sizeof(int);
+        int start_result_dist_addr = (query_id * size_results + 1 + size_results_vec_ID) * 64 / sizeof(int);
 
         // Load data
         memcpy(&hw_result_vec_ID_partial[0], &out[start_result_vec_ID_addr], 8 * TOPK);

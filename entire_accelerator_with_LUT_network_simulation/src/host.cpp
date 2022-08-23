@@ -230,7 +230,7 @@ int main(int argc, char** argv)
     // in init
     size_t query_num = 10000;
     size_t nlist = 32768;
-    size_t nprobe = 32;
+    size_t nprobe = 8;
 
     assert (nprobe <= nlist);
 
