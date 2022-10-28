@@ -1,0 +1,342 @@
+g++ -g -std=c++11 -I/home/wejiang/opt/xilinx/xrt/include -o host src/host.cpp -L/home/wejiang/opt/xilinx/xrt/lib -lxilinxopencl -pthread -lrt
+Compiled Host Executable: host
+mkdir -p ./xclbin
+v++ -g -t hw --platform xilinx_u250_gen3x16_xdma_4_1_202210_1 --save-temps --config connectivity.cfg -c -k vadd --temp_dir ./_x.hw -o xclbin/vadd.hw.xo src/vadd.cpp
+Option Map File Used: '/tools/Xilinx/Vitis/2022.1/data/vitis/vpp/optMap.xml'
+INFO: [v++ 82-4274] Default memory will be used for trace offload
+
+****** v++ v2022.1 (64-bit)
+  **** SW Build 3524075 on 2022-04-13-17:42:45
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+INFO: [v++ 60-1306] Additional information associated with this v++ compile can be found at:
+	Reports: /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/reports/vadd.hw
+	Log files: /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/logs/vadd.hw
+Running Dispatch Server on port: 39125
+INFO: [v++ 60-1548] Creating build summary session with primary output /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/xclbin/vadd.hw.xo.compile_summary, at Fri Oct 28 19:27:28 2022
+INFO: [v++ 60-1316] Initiating connection to rulecheck server, at Fri Oct 28 19:27:28 2022
+INFO: [v++ 60-1315] Creating rulecheck session with output '/pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/reports/vadd.hw/v++_compile_vadd.hw_guidance.html', at Fri Oct 28 19:27:30 2022
+INFO: [v++ 60-895]   Target platform: /opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/xilinx_u250_gen3x16_xdma_4_1_202210_1.xpfm
+INFO: [v++ 60-1578]   This platform contains Xilinx Shell Archive '/opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/hw/hw.xsa'
+INFO: [v++ 74-78] Compiler Version string: 2022.1
+INFO: [v++ 60-585] Compiling for hardware target
+INFO: [v++ 60-423]   Target device: xilinx_u250_gen3x16_xdma_4_1_202210_1
+INFO: [v++ 60-242] Creating kernel: 'vadd'
+INFO: [v++ 60-1616] Creating a HLS clock using kernel_frequency option: 135 MHz
+
+===>The following messages were generated while  performing high-level synthesis for kernel: vadd Log file: /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/vadd.hw/vadd/vitis_hls.log :
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_31_2'.
+INFO: [v++ 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 3, loop 'VITIS_LOOP_31_2'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_71_2'.
+INFO: [v++ 200-1470] Pipelining result : Target II = NA, Final II = 16, Depth = 17, loop 'VITIS_LOOP_71_2'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_88_4'.
+INFO: [v++ 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, loop 'VITIS_LOOP_88_4'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_93_5_VITIS_LOOP_94_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 3, loop 'VITIS_LOOP_93_5_VITIS_LOOP_94_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_206_1'.
+WARNING: [v++ 200-885] The II Violation in module 'load_meta_data_Pipeline_VITIS_LOOP_206_1' (loop 'VITIS_LOOP_206_1'): Unable to schedule bus request operation ('gmem_control_load_1_req', /tools/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/hls_stream_39.h:174) on port 'gmem_control' (/tools/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/hls_stream_39.h:174) due to limited memory ports (II = 1). Please consider using a memory core with more ports or partitioning the array.
+Resolution: For help on HLS 200-885 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-885.html
+WARNING: [v++ 200-885] The II Violation in module 'load_meta_data_Pipeline_VITIS_LOOP_206_1' (loop 'VITIS_LOOP_206_1'): Unable to schedule bus request operation ('gmem_control_load_2_req', /tools/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/hls_stream_39.h:174) on port 'gmem_control' (/tools/Xilinx/Vitis_HLS/2022.1/common/technology/autopilot/hls_stream_39.h:174) due to limited memory ports (II = 2). Please consider using a memory core with more ports or partitioning the array.
+Resolution: For help on HLS 200-885 see www.xilinx.com/cgi-bin/docs/rdoc?v=2022.1;t=hls+guidance;d=200-885.html
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 3, Depth = 75, loop 'VITIS_LOOP_206_1'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_213_2'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 3, loop 'VITIS_LOOP_213_2'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_47_1_VITIS_LOOP_48_2_VITIS_LOOP_49_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_47_1_VITIS_LOOP_48_2_VITIS_LOOP_49_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_80_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 1, loop 'VITIS_LOOP_80_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_92_4_VITIS_LOOP_93_5'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_92_4_VITIS_LOOP_93_5'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_127_4'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 1, loop 'VITIS_LOOP_127_4'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_139_5_VITIS_LOOP_140_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_139_5_VITIS_LOOP_140_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_174_1_VITIS_LOOP_175_2_VITIS_LOOP_176_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_193_5_VITIS_LOOP_194_6'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 5, loop 'VITIS_LOOP_205_8_VITIS_LOOP_206_9'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 24, loop 'VITIS_LOOP_214_10_VITIS_LOOP_216_11'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_247_1_VITIS_LOOP_249_2_VITIS_LOOP_251_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 4, Depth = 6, loop 'VITIS_LOOP_247_1_VITIS_LOOP_249_2_VITIS_LOOP_251_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_53_1_VITIS_LOOP_54_2'.
+INFO: [v++ 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 3, loop 'VITIS_LOOP_53_1_VITIS_LOOP_54_2'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_68_1'.
+INFO: [v++ 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, loop 'VITIS_LOOP_68_1'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_76_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 4, loop 'VITIS_LOOP_76_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_31_1_VITIS_LOOP_33_2'.
+INFO: [v++ 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 3, loop 'VITIS_LOOP_31_1_VITIS_LOOP_33_2'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_131_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 3, loop 'VITIS_LOOP_131_3'
+INFO: [v++ 204-61] Pipelining loop 'CP_LUT_LOOP'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'CP_LUT_LOOP'
+INFO: [v++ 204-61] Pipelining loop 'ADC_LOOP'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 259, loop 'ADC_LOOP'
+INFO: [v++ 204-61] Pipelining loop 'CP_LUT_LOOP'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'CP_LUT_LOOP'
+INFO: [v++ 204-61] Pipelining loop 'ADC_LOOP'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 259, loop 'ADC_LOOP'
+INFO: [v++ 204-61] Pipelining loop 'CP_LUT_LOOP'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'CP_LUT_LOOP'
+INFO: [v++ 204-61] Pipelining loop 'ADC_LOOP'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 259, loop 'ADC_LOOP'
+INFO: [v++ 204-61] Pipelining loop 'CP_LUT_LOOP'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'CP_LUT_LOOP'
+INFO: [v++ 204-61] Pipelining loop 'ADC_LOOP'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 259, loop 'ADC_LOOP'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_266_1_VITIS_LOOP_268_2_VITIS_LOOP_270_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 3, loop 'VITIS_LOOP_266_1_VITIS_LOOP_268_2_VITIS_LOOP_270_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_80_1'.
+INFO: [v++ 200-1470] Pipelining result : Target II = NA, Final II = 1, Depth = 2, loop 'VITIS_LOOP_80_1'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_114_2'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 2, Final II = 2, Depth = 3, loop 'VITIS_LOOP_114_2'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_114_2'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 2, Final II = 2, Depth = 3, loop 'VITIS_LOOP_114_2'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_114_2'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 2, Final II = 2, Depth = 3, loop 'VITIS_LOOP_114_2'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_114_2'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 2, Final II = 2, Depth = 3, loop 'VITIS_LOOP_114_2'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_45_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 2, Depth = 4, loop 'VITIS_LOOP_45_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_55_4'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_55_4'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_45_3'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 2, Depth = 4, loop 'VITIS_LOOP_45_3'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_55_4'.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 1, Depth = 2, loop 'VITIS_LOOP_55_4'
+INFO: [v++ 204-61] Pipelining loop 'VITIS_LOOP_45_3'.
+INFO: [v++ 17-14] Message 'v++ 204-61' appears 100 times and further instances of the messages will be disabled.
+INFO: [v++ 200-1470] Pipelining result : Target II = 1, Final II = 2, Depth = 4, loop 'VITIS_LOOP_45_3'
+INFO: [v++ 17-14] Message 'v++ 200-1470' appears 100 times and further instances of the messages will be disabled.
+INFO: [v++ 200-790] **** Loop Constraint Status: All loop constraints were NOT satisfied.
+INFO: [v++ 200-789] **** Estimated Fmax: 184.94 MHz
+INFO: [v++ 60-594] Finished kernel compilation
+INFO: [v++ 60-244] Generating system estimate report...
+INFO: [v++ 60-1092] Generated system estimate report: /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/reports/vadd.hw/system_estimate_vadd.hw.xtxt
+INFO: [v++ 60-586] Created xclbin/vadd.hw.xo
+INFO: [v++ 60-2343] Use the vitis_analyzer tool to visualize and navigate the relevant reports. Run the following command. 
+    vitis_analyzer /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/xclbin/vadd.hw.xo.compile_summary 
+INFO: [v++ 60-791] Total elapsed time: 0h 16m 15s
+INFO: [v++ 60-1653] Closing dispatch client.
+mkdir -p ./xclbin
+v++ -g -t hw --platform xilinx_u250_gen3x16_xdma_4_1_202210_1 --save-temps --config connectivity.cfg -l --temp_dir ./_x.hw -o xclbin/vadd.hw.xclbin xclbin/vadd.hw.xo # 
+Option Map File Used: '/tools/Xilinx/Vitis/2022.1/data/vitis/vpp/optMap.xml'
+INFO: [v++ 82-4274] Default memory will be used for trace offload
+
+****** v++ v2022.1 (64-bit)
+  **** SW Build 3524075 on 2022-04-13-17:42:45
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+INFO: [v++ 60-1306] Additional information associated with this v++ link can be found at:
+	Reports: /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/reports/link
+	Log files: /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/logs/link
+Running Dispatch Server on port: 35899
+INFO: [v++ 60-1548] Creating build summary session with primary output /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/xclbin/vadd.hw.xclbin.link_summary, at Fri Oct 28 19:43:46 2022
+INFO: [v++ 60-1316] Initiating connection to rulecheck server, at Fri Oct 28 19:43:46 2022
+INFO: [v++ 60-1315] Creating rulecheck session with output '/pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/reports/link/v++_link_vadd.hw_guidance.html', at Fri Oct 28 19:43:48 2022
+INFO: [v++ 60-895]   Target platform: /opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/xilinx_u250_gen3x16_xdma_4_1_202210_1.xpfm
+INFO: [v++ 60-1578]   This platform contains Xilinx Shell Archive '/opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/hw/hw.xsa'
+INFO: [v++ 74-78] Compiler Version string: 2022.1
+INFO: [v++ 82-4274] Default memory will be used for trace offload
+INFO: [v++ 60-629] Linking for hardware target
+INFO: [v++ 60-423]   Target device: xilinx_u250_gen3x16_xdma_4_1_202210_1
+INFO: [v++ 60-1332] Run 'run_link' status: Not started
+INFO: [v++ 60-1443] [19:44:07] Run run_link: Step system_link: Started
+INFO: [v++ 60-1453] Command Line: system_link --xo /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/xclbin/vadd.hw.xo -keep --config /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int/syslinkConfig.ini --xpfm /opt/xilinx/platforms/xilinx_u250_gen3x16_xdma_4_1_202210_1/xilinx_u250_gen3x16_xdma_4_1_202210_1.xpfm --target hw --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/run_link
+INFO: [SYSTEM_LINK 60-1316] Initiating connection to rulecheck server, at Fri Oct 28 19:44:09 2022
+INFO: [SYSTEM_LINK 82-70] Extracting xo v3 file /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/xclbin/vadd.hw.xo
+INFO: [SYSTEM_LINK 82-53] Creating IP database /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml
+INFO: [SYSTEM_LINK 82-38] [19:44:24] build_xd_ip_db started: /tools/Xilinx/Vitis/2022.1/bin/build_xd_ip_db -ip_search 0  -sds-pf /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/hw.hpfm -clkid 0 -ip /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/iprepo/xilinx_com_hls_vadd_1_0,vadd -o /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml
+INFO: [SYSTEM_LINK 82-37] [19:44:32] build_xd_ip_db finished successfully
+Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 2268.258 ; gain = 0.000 ; free physical = 81826 ; free virtual = 276933
+INFO: [SYSTEM_LINK 82-51] Create system connectivity graph
+INFO: [SYSTEM_LINK 82-102] Applying explicit connections to the system connectivity graph: /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml
+INFO: [SYSTEM_LINK 82-38] [19:44:32] cfgen started: /tools/Xilinx/Vitis/2022.1/bin/cfgen  -nk vadd:1:vadd_1 -sp vadd_1.meta_data_init:DDR[1] -sp vadd_1.in_DRAM:DDR[0] -sp vadd_1.PQ_codes_DRAM_0:DDR[0] -sp vadd_1.PQ_codes_DRAM_1:DDR[1] -sp vadd_1.PQ_codes_DRAM_2:DDR[2] -sp vadd_1.PQ_codes_DRAM_3:DDR[3] -sp vadd_1.vec_ID_DRAM_0:DDR[0] -sp vadd_1.vec_ID_DRAM_1:DDR[1] -sp vadd_1.vec_ID_DRAM_2:DDR[2] -sp vadd_1.vec_ID_DRAM_3:DDR[3] -sp vadd_1.out_DRAM:DDR[3] -dmclkid 0 -r /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml -o /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml
+INFO: [CFGEN 83-0] Kernel Specs: 
+INFO: [CFGEN 83-0]   kernel: vadd, num: 1  {vadd_1}
+INFO: [CFGEN 83-0] Port Specs: 
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: meta_data_init, sptag: DDR[1]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: in_DRAM, sptag: DDR[0]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: PQ_codes_DRAM_0, sptag: DDR[0]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: PQ_codes_DRAM_1, sptag: DDR[1]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: PQ_codes_DRAM_2, sptag: DDR[2]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: PQ_codes_DRAM_3, sptag: DDR[3]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: vec_ID_DRAM_0, sptag: DDR[0]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: vec_ID_DRAM_1, sptag: DDR[1]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: vec_ID_DRAM_2, sptag: DDR[2]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: vec_ID_DRAM_3, sptag: DDR[3]
+INFO: [CFGEN 83-0]   kernel: vadd_1, k_port: out_DRAM, sptag: DDR[3]
+INFO: [SYSTEM_LINK 82-37] [19:44:38] cfgen finished successfully
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 2268.258 ; gain = 0.000 ; free physical = 86462 ; free virtual = 281608
+INFO: [SYSTEM_LINK 82-52] Create top-level block diagram
+INFO: [SYSTEM_LINK 82-38] [19:44:38] cf2bd started: /tools/Xilinx/Vitis/2022.1/bin/cf2bd  --linux --trace_buffer 1024 --input_file /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml --ip_db /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml --cf_name dr --working_dir /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/_sysl/.xsd --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int --target_bd ulp.bd
+INFO: [CF2BD 82-31] Launching cf2xd: cf2xd -linux -trace-buffer 1024 -i /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/cfgraph/cfgen_cfgraph.xml -r /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/_sysl/.cdb/xd_ip_db.xml -o dr.xml
+INFO: [CF2BD 82-28] cf2xd finished successfully
+INFO: [CF2BD 82-31] Launching cf_xsd: cf_xsd -disable-address-gen -bd ulp.bd -dn dr -dp /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/sys_link/_sysl/.xsd
+INFO: [CF2BD 82-28] cf_xsd finished successfully
+INFO: [SYSTEM_LINK 82-37] [19:44:42] cf2bd finished successfully
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:04 . Memory (MB): peak = 2268.258 ; gain = 0.000 ; free physical = 86307 ; free virtual = 281636
+INFO: [v++ 60-1441] [19:44:42] Run run_link: Step system_link: Completed
+Time (s): cpu = 00:00:23 ; elapsed = 00:00:35 . Memory (MB): peak = 2205.020 ; gain = 0.000 ; free physical = 86161 ; free virtual = 281489
+INFO: [v++ 60-1443] [19:44:42] Run run_link: Step cf2sw: Started
+INFO: [v++ 60-1453] Command Line: cf2sw -sdsl /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int/sdsl.dat -rtd /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int/cf2sw.rtd -nofilter /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int/cf2sw_full.rtd -xclbin /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int/xclbin_orig.xml -o /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int/xclbin_orig.1.xml
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/run_link
+INFO: [v++ 60-1441] [19:44:47] Run run_link: Step cf2sw: Completed
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 2205.020 ; gain = 0.000 ; free physical = 86672 ; free virtual = 282030
+INFO: [v++ 60-1443] [19:44:47] Run run_link: Step rtd2_system_diagram: Started
+INFO: [v++ 60-1453] Command Line: rtd2SystemDiagram
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/run_link
+INFO: [v++ 60-1441] [19:44:48] Run run_link: Step rtd2_system_diagram: Completed
+Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.72 . Memory (MB): peak = 2205.020 ; gain = 0.000 ; free physical = 86384 ; free virtual = 281747
+INFO: [v++ 60-1443] [19:44:48] Run run_link: Step vpl: Started
+INFO: [v++ 60-1453] Command Line: vpl -t hw -f xilinx_u250_gen3x16_xdma_4_1_202210_1 -g --kernel_frequency 135 --remote_ip_cache /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/.ipcache -s --trace_memory DDR[0] --output_dir /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int --log_dir /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/logs/link --report_dir /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/reports/link --config /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int/vplConfig.ini -k /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int/kernel_info.dat --webtalk_flag Vitis --temp_dir /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link --no-info --iprepo /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int/xo/ip_repo/xilinx_com_hls_vadd_1_0 --messageDb /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/run_link/vpl.pb /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int/dr.bd.tcl
+INFO: [v++ 60-1454] Run Directory: /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/run_link
+
+****** vpl v2022.1 (64-bit)
+  **** SW Build 3524075 on 2022-04-13-17:42:45
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+INFO: [VPL 60-839] Read in kernel information from file '/pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/int/kernel_info.dat'.
+INFO: [VPL 74-78] Compiler Version string: 2022.1
+INFO: [VPL 60-423]   Target device: xilinx_u250_gen3x16_xdma_4_1_202210_1
+INFO: [VPL 82-4282] Memory used for trace offload is DDR 0 
+INFO: [VPL 60-1032] Extracting hardware platform to /pub/scratch/wenqi/PQMem/entire_accelerator_final_GNN_M64/_x.hw/link/vivado/vpl/.local/hw_platform
+[19:45:08] Run vpl: Step create_project: Started
+Creating Vivado project.
+[19:45:13] Run vpl: Step create_project: Completed
+[19:45:13] Run vpl: Step create_bd: Started
+[19:46:08] Run vpl: Step create_bd: Completed
+[19:46:08] Run vpl: Step update_bd: Started
+WARNING: [VPL-1] The use of profile options turned on trace, which uses a memory resource in one SLR; however kernels or compute units could potentially be located in multiple SLRs. This may impact timing due to SLR crossing. To improve timing, please consider implementing trace memory in every SLRs used via the linker option: --profile.trace_memory <memory>:<SLR>. SLRs present on the design : SLR0 SLR1 SLR2 SLR3
+[19:46:21] Run vpl: Step update_bd: Completed
+[19:46:21] Run vpl: Step generate_target: Started
+[19:47:41] Run vpl: Step generate_target: RUNNING...
+[19:49:00] Run vpl: Step generate_target: RUNNING...
+[19:50:22] Run vpl: Step generate_target: RUNNING...
+[19:50:27] Run vpl: Step generate_target: Completed
+[19:50:27] Run vpl: Step config_hw_runs: Started
+[19:51:58] Run vpl: Step config_hw_runs: RUNNING...

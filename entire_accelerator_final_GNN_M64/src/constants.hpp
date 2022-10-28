@@ -7,8 +7,9 @@
 // #define ITER_NUM_PER_QUERY 10000
 
 // Variables that can be changed & should be set at compile time
-#define D 256 // Set the LUT construction PE II=2 to reduce resource consumption
+#define D 256
 #define M 64
+#define LUT_CONSTR_SUB_PE_NUM 16 // M must >= 16
 #define LUT_ENTRY_NUM 256
 #define ADC_DOUBLE_BUF_ENABLE 0 // 0 = disable, 1 = enable
 

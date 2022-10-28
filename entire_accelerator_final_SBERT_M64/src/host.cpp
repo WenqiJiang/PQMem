@@ -6,6 +6,7 @@
 #include <limits>
 #include <assert.h>
 #include <string>
+#include <stdint.h>
 
 #include "constants.hpp"
 // Wenqi: seems 2022.1 somehow does not support linking ap_uint.h to host?
@@ -26,7 +27,7 @@ std::string dir_concat(std::string dir1, std::string dir2) {
 int main(int argc, char** argv)
 {
     cl_int err;
-    std::string db_name = "SBERT1000M";
+    std::string db_name = "SBERT3000M";
     // std::string db_name = "SIFT100M";
     std::cout << "DB name: " << db_name << std::endl;
     
@@ -64,7 +65,7 @@ int main(int argc, char** argv)
         }
         else if (db_name == "SBERT3000M") {
             nlist = 65536;
-            data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/SBERT1000M_IVF65536,PQ64_4shards/shard_0";
+            data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/SBERT3000M_IVF65536,PQ64_4shards/shard_0";
             raw_gt_vec_ID_suffix_dir = "gt_idx_3000M.ibin";
             raw_gt_dist_suffix_dir = "gt_dis_3000M.fbin";
             vector_quantizer_dir_suffix = "vector_quantizer_float32_65536_384_raw";
@@ -290,8 +291,8 @@ int main(int argc, char** argv)
     // the raw ground truth size is the same for idx_1M.ivecs, idx_10M.ivecs, idx_100M.ivecs
     // recall counts the very first nearest neighbor only
     size_t gt_vec_ID_size = 10000 * sizeof(int);
-    std::vector<int, aligned_allocator<int>> raw_gt_vec_ID(raw_gt_vec_ID_size / sizeof(int), 0);
-    std::vector<int, aligned_allocator<int>> gt_vec_ID(gt_vec_ID_size / sizeof(int), 0);
+    std::vector<uint32_t, aligned_allocator<uint32_t>> raw_gt_vec_ID(raw_gt_vec_ID_size / sizeof(int), 0);
+    std::vector<uint32_t, aligned_allocator<uint32_t>> gt_vec_ID(gt_vec_ID_size / sizeof(int), 0);
     
     size_t gt_dist_size = 10000 * sizeof(float);
     std::vector<float, aligned_allocator<float>> raw_gt_dist(raw_gt_dist_size / sizeof(float), 0);

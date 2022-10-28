@@ -6,6 +6,7 @@
 #include <limits>
 #include <assert.h>
 #include <string>
+#include <stdint.h>
 
 #include "constants.hpp"
 // Wenqi: seems 2022.1 somehow does not support linking ap_uint.h to host?
@@ -26,8 +27,7 @@ std::string dir_concat(std::string dir1, std::string dir2) {
 int main(int argc, char** argv)
 {
     cl_int err;
-    std::string db_name = "SIFT1000M";
-    // std::string db_name = "SIFT100M";
+    std::string db_name = "GNN1400M";
     std::cout << "DB name: " << db_name << std::endl;
     
     std::string index_scan = "hnsw"; // hnsw or brute-force
@@ -41,14 +41,38 @@ int main(int argc, char** argv)
     // create buffer using CL_MEM_USE_HOST_PTR to align user buffer to page boundary. It will 
     // ensure that user buffer is used when user create Buffer/Mem object with CL_MEM_USE_HOST_PTR 
 
+    size_t query_num;
+    size_t nlist;
     std::string data_dir_prefix;
-    if (db_name == "SIFT100M") {
-        data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/SIFT100M_IVF32768,PQ32";
+    std::string raw_gt_vec_ID_suffix_dir;
+    std::string raw_gt_dist_suffix_dir;
+    std::string gnd_dir;
+    std::string product_quantizer_dir_suffix;
+    std::string query_vectors_dir_suffix;
+    std::string vector_quantizer_dir_suffix;
+    size_t raw_gt_vec_ID_size;
+    size_t raw_gt_dist_size;
+    size_t len_per_result; 
+    size_t result_start_bias;
+    if (strncmp(db_name.c_str(), "GNN", 3) == 0) {
+        if (db_name == "GNN1400M") {
+            nlist = 32768;
+            data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/GNN1400M_IVF32768,PQ64_2shards/shard_0";
+            raw_gt_vec_ID_suffix_dir = "gt_idx_1400M.ibin";
+            raw_gt_dist_suffix_dir = "gt_dis_1400M.fbin";
+            vector_quantizer_dir_suffix = "vector_quantizer_float32_32768_256_raw";
+        }
+        query_num = 10000;
+        gnd_dir = "/mnt/scratch/wenqi/Faiss_experiments/Marius_GNN/";
+        product_quantizer_dir_suffix = "product_quantizer_float32_64_256_4_raw";
+        query_vectors_dir_suffix = "query_vectors_float32_10000_256_raw";
+        raw_gt_vec_ID_size = (10000 * 1000 + 2) * sizeof(int);
+        raw_gt_dist_size = (10000 * 1000 + 2) * sizeof(float);
+        len_per_result = 1000;
+        result_start_bias = 2;
     }
-    else if (db_name == "SIFT1000M") {
-        data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/SIFT1000M_IVF32768,PQ32";
-    }
-    std::string gnd_dir = "/mnt/scratch/wenqi/Faiss_experiments/bigann/gnd/";
+
+    std::cout << "Loading the first shard of the dataset... " << std::endl;
 
     ///////////     get data size from disk     //////////
 
@@ -165,7 +189,6 @@ int main(int argc, char** argv)
     if (!nlist_num_vecs_size) std::cout << "nlist_num_vecs_size is 0!";
     nlist_num_vecs_fstream.seekg(0, nlist_num_vecs_fstream.beg);
 
-    std::string product_quantizer_dir_suffix("product_quantizer_float32_32_256_4_raw");
     std::string product_quantizer_dir = dir_concat(data_dir_prefix, product_quantizer_dir_suffix);
     std::ifstream product_quantizer_fstream(
         product_quantizer_dir, 
@@ -176,25 +199,11 @@ int main(int argc, char** argv)
     product_quantizer_fstream.seekg(0, product_quantizer_fstream.beg);
 
     // ground truth 
-    std::string raw_gt_vec_ID_suffix_dir;
-    if (db_name == "SIFT100M") {
-        raw_gt_vec_ID_suffix_dir = "idx_100M.ivecs";
-    }
-    else if (db_name == "SIFT1000M") {
-        raw_gt_vec_ID_suffix_dir = "idx_1000M.ivecs";
-    }
     std::string raw_gt_vec_ID_dir = dir_concat(gnd_dir, raw_gt_vec_ID_suffix_dir);
     std::ifstream raw_gt_vec_ID_fstream(
         raw_gt_vec_ID_dir,
         std::ios::in | std::ios::binary);
 
-    std::string raw_gt_dist_suffix_dir;
-    if (db_name == "SIFT100M") {
-        raw_gt_dist_suffix_dir = "dis_100M.fvecs";
-    }
-    else if (db_name == "SIFT1000M") {
-        raw_gt_dist_suffix_dir = "dis_1000M.fvecs";
-    }
     std::string raw_gt_dist_dir = dir_concat(gnd_dir, raw_gt_dist_suffix_dir);
     std::ifstream raw_gt_dist_fstream(
         raw_gt_dist_dir,
@@ -202,7 +211,6 @@ int main(int argc, char** argv)
 
     // info used to Select Cells to Scan
 
-    std::string query_vectors_dir_suffix("query_vectors_float32_10000_128_raw");
     std::string query_vectors_dir = dir_concat(data_dir_prefix, query_vectors_dir_suffix);
     std::ifstream query_vectors_fstream(
         query_vectors_dir, 
@@ -212,7 +220,6 @@ int main(int argc, char** argv)
     if (!query_vectors_size) std::cout << "query_vectors_size is 0!";
     query_vectors_fstream.seekg(0, query_vectors_fstream.beg);
     
-    std::string vector_quantizer_dir_suffix("vector_quantizer_float32_32768_128_raw");
     std::string vector_quantizer_dir = dir_concat(data_dir_prefix, vector_quantizer_dir_suffix);
     std::ifstream vector_quantizer_fstream(
         vector_quantizer_dir, 
@@ -228,9 +235,7 @@ int main(int argc, char** argv)
     auto start_load = std::chrono::high_resolution_clock::now();
 
     // in init
-    size_t query_num = 10000;
-    size_t nlist = 32768;
-    size_t nprobe = 8;
+    size_t nprobe = 32;
 
     assert (nprobe <= nlist);
 
@@ -277,12 +282,10 @@ int main(int argc, char** argv)
 
     // the raw ground truth size is the same for idx_1M.ivecs, idx_10M.ivecs, idx_100M.ivecs
     // recall counts the very first nearest neighbor only
-    size_t raw_gt_vec_ID_size = 10000 * 1001 * sizeof(int);
     size_t gt_vec_ID_size = 10000 * sizeof(int);
-    std::vector<int, aligned_allocator<int>> raw_gt_vec_ID(raw_gt_vec_ID_size / sizeof(int), 0);
-    std::vector<int, aligned_allocator<int>> gt_vec_ID(gt_vec_ID_size / sizeof(int), 0);
+    std::vector<uint32_t, aligned_allocator<uint32_t>> raw_gt_vec_ID(raw_gt_vec_ID_size / sizeof(int), 0);
+    std::vector<uint32_t, aligned_allocator<uint32_t>> gt_vec_ID(gt_vec_ID_size / sizeof(int), 0);
     
-    size_t raw_gt_dist_size = 10000 * 1001 * sizeof(float);
     size_t gt_dist_size = 10000 * sizeof(float);
     std::vector<float, aligned_allocator<float>> raw_gt_dist(raw_gt_dist_size / sizeof(float), 0);
     std::vector<float, aligned_allocator<float>> gt_dist(gt_dist_size / sizeof(float), 0);
@@ -461,7 +464,7 @@ int main(int argc, char** argv)
     free(raw_gt_vec_ID_char);
 
     for (int i = 0; i < 10000; i++) {
-        gt_vec_ID[i] = raw_gt_vec_ID[i * 1001 + 1];
+        gt_vec_ID[i] = raw_gt_vec_ID[i * len_per_result + result_start_bias];
     }
 
     char* raw_gt_dist_char = (char*) malloc(raw_gt_dist_size);
@@ -474,7 +477,7 @@ int main(int argc, char** argv)
     free(raw_gt_dist_char);
 
     for (int i = 0; i < 10000; i++) {
-        gt_dist[i] = raw_gt_dist[i * 1001 + 1];
+        gt_dist[i] = raw_gt_dist[i * len_per_result + result_start_bias];
     }
 
     // on host, used to Select Cells to Scan
@@ -772,7 +775,7 @@ int main(int argc, char** argv)
         }
         
 
-        int start_addr_gt = query_id * 1001 + 1;
+        int start_addr_gt = query_id * len_per_result + result_start_bias;
 
         // R1@K
         for (int k = 0; k < 1; k++) {
