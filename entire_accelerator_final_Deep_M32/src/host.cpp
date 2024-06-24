@@ -30,8 +30,8 @@ int main(int argc, char** argv)
     // std::string db_name = "Deep100M";
     std::cout << "DB name: " << db_name << std::endl;
     
-    std::string index_scan = "hnsw"; // hnsw or brute-force
-    // std::string index_scan = "brute-force"; // hnsw or brute-force
+    // std::string index_scan = "hnsw"; // hnsw or brute-force
+    std::string index_scan = "brute_force"; // hnsw or brute-force
     std::cout << "Index scan: " << index_scan << std::endl;
 
     // Allocate Memory in Host Memory

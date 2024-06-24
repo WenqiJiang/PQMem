@@ -30,8 +30,8 @@ int main(int argc, char** argv)
     // std::string db_name = "Deep100M";
     std::cout << "DB name: " << db_name << std::endl;
     
-    std::string index_scan = "hnsw"; // hnsw or brute-force
-    // std::string index_scan = "brute-force"; // hnsw or brute-force
+    // std::string index_scan = "hnsw"; // hnsw or brute-force
+    std::string index_scan = "brute_force"; // hnsw or brute-force
     std::cout << "Index scan: " << index_scan << std::endl;
 
     // Allocate Memory in Host Memory
@@ -42,13 +42,37 @@ int main(int argc, char** argv)
     // ensure that user buffer is used when user create Buffer/Mem object with CL_MEM_USE_HOST_PTR 
 
     std::string data_dir_prefix;
-    if (db_name == "Deep100M") {
-        data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/Deep100M_IVF32768,PQ16";
+    std::string raw_gt_vec_ID_suffix_dir;
+    std::string raw_gt_dist_suffix_dir;
+    std::string gnd_dir;
+    std::string product_quantizer_dir_suffix;
+    std::string query_vectors_dir_suffix;
+    std::string vector_quantizer_dir_suffix;
+    size_t raw_gt_vec_ID_size;
+    size_t raw_gt_dist_size;
+    size_t len_per_result; 
+    size_t result_start_bias;
+    if (strncmp(db_name.c_str(), "Deep", 4) == 0) {
+        if (db_name == "Deep100M") {
+            data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/Deep100M_IVF32768,PQ16";
+            raw_gt_vec_ID_suffix_dir = "gt_idx_100M.ibin";
+            raw_gt_dist_suffix_dir = "gt_dis_100M.fbin";
+        }
+        else if (db_name == "Deep1000M") {
+            data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/Deep1000M_IVF32768,PQ16";
+            raw_gt_vec_ID_suffix_dir = "gt_idx_1000M.ibin";
+            raw_gt_dist_suffix_dir = "gt_dis_1000M.fbin";
+        }
+        gnd_dir = "/mnt/scratch/wenqi/Faiss_experiments/deep1b/";
+        product_quantizer_dir_suffix = "product_quantizer_float32_16_256_6_raw";
+        query_vectors_dir_suffix = "query_vectors_float32_10000_96_raw";
+        vector_quantizer_dir_suffix = "vector_quantizer_float32_32768_96_raw";
+        raw_gt_vec_ID_size = (2 + 10000 * 100) * sizeof(int);
+        raw_gt_dist_size = (2 + 10000 * 100) * sizeof(float);
+        len_per_result = 100;
+        result_start_bias = 2;
     }
-    else if (db_name == "Deep1000M") {
-        data_dir_prefix = "/mnt/scratch/wenqi/Faiss_Enzian_U250_index/Deep1000M_IVF32768,PQ16";
-    }
-    std::string gnd_dir = "/mnt/scratch/wenqi/Faiss_experiments/deep1b/";
+
 
     ///////////     get data size from disk     //////////
 
@@ -165,7 +189,6 @@ int main(int argc, char** argv)
     if (!nlist_num_vecs_size) std::cout << "nlist_num_vecs_size is 0!";
     nlist_num_vecs_fstream.seekg(0, nlist_num_vecs_fstream.beg);
 
-    std::string product_quantizer_dir_suffix("product_quantizer_float32_16_256_6_raw");
     std::string product_quantizer_dir = dir_concat(data_dir_prefix, product_quantizer_dir_suffix);
     std::ifstream product_quantizer_fstream(
         product_quantizer_dir, 
@@ -176,25 +199,11 @@ int main(int argc, char** argv)
     product_quantizer_fstream.seekg(0, product_quantizer_fstream.beg);
 
     // ground truth 
-    std::string raw_gt_vec_ID_suffix_dir;
-    if (db_name == "Deep100M") {
-        raw_gt_vec_ID_suffix_dir = "gt_idx_100M.ibin";
-    }
-    else if (db_name == "Deep1000M") {
-        raw_gt_vec_ID_suffix_dir = "gt_idx_1000M.ibin";
-    }
     std::string raw_gt_vec_ID_dir = dir_concat(gnd_dir, raw_gt_vec_ID_suffix_dir);
     std::ifstream raw_gt_vec_ID_fstream(
         raw_gt_vec_ID_dir,
         std::ios::in | std::ios::binary);
 
-    std::string raw_gt_dist_suffix_dir;
-    if (db_name == "Deep100M") {
-        raw_gt_dist_suffix_dir = "gt_dis_100M.fbin";
-    }
-    else if (db_name == "Deep1000M") {
-        raw_gt_dist_suffix_dir = "gt_dis_1000M.fbin";
-    }
     std::string raw_gt_dist_dir = dir_concat(gnd_dir, raw_gt_dist_suffix_dir);
     std::ifstream raw_gt_dist_fstream(
         raw_gt_dist_dir,
@@ -202,7 +211,6 @@ int main(int argc, char** argv)
 
     // info used to Select Cells to Scan
 
-    std::string query_vectors_dir_suffix("query_vectors_float32_10000_96_raw");
     std::string query_vectors_dir = dir_concat(data_dir_prefix, query_vectors_dir_suffix);
     std::ifstream query_vectors_fstream(
         query_vectors_dir, 
@@ -212,7 +220,6 @@ int main(int argc, char** argv)
     if (!query_vectors_size) std::cout << "query_vectors_size is 0!";
     query_vectors_fstream.seekg(0, query_vectors_fstream.beg);
     
-    std::string vector_quantizer_dir_suffix("vector_quantizer_float32_32768_96_raw");
     std::string vector_quantizer_dir = dir_concat(data_dir_prefix, vector_quantizer_dir_suffix);
     std::ifstream vector_quantizer_fstream(
         vector_quantizer_dir, 
@@ -277,12 +284,10 @@ int main(int argc, char** argv)
 
     // the raw ground truth size is the same for idx_1M.ivecs, idx_10M.ivecs, idx_100M.ivecs
     // recall counts the very first nearest neighbor only
-    size_t raw_gt_vec_ID_size = (2 + 10000 * 100) * sizeof(int);
     size_t gt_vec_ID_size = 10000 * sizeof(int);
     std::vector<int, aligned_allocator<int>> raw_gt_vec_ID(raw_gt_vec_ID_size / sizeof(int), 0);
     std::vector<int, aligned_allocator<int>> gt_vec_ID(gt_vec_ID_size / sizeof(int), 0);
     
-    size_t raw_gt_dist_size = (2 + 10000 * 100) * sizeof(float);
     size_t gt_dist_size = 10000 * sizeof(float);
     std::vector<float, aligned_allocator<float>> raw_gt_dist(raw_gt_dist_size / sizeof(float), 0);
     std::vector<float, aligned_allocator<float>> gt_dist(gt_dist_size / sizeof(float), 0);
@@ -297,7 +302,6 @@ int main(int argc, char** argv)
     std::cout << "Loading data from disk...\n";
 
     // PQ codes
-    // std::cout << "1\n";
     char* PQ_codes_DRAM_0_char = (char*) malloc(PQ_codes_DRAM_0_size);
     PQ_codes_DRAM_0_fstream.read(PQ_codes_DRAM_0_char, PQ_codes_DRAM_0_size);
     if (!PQ_codes_DRAM_0_fstream) {
@@ -335,7 +339,6 @@ int main(int argc, char** argv)
     free(PQ_codes_DRAM_3_char);
 
     // vec ID
-    // std::cout << "2\n";
     char* vec_ID_DRAM_0_char = (char*) malloc(vec_ID_DRAM_0_size);
     vec_ID_DRAM_0_fstream.read(vec_ID_DRAM_0_char, vec_ID_DRAM_0_size);
     if (!vec_ID_DRAM_0_fstream) {
@@ -374,7 +377,6 @@ int main(int argc, char** argv)
 
     // control signals
     // meta_data_init = nlist_PQ_codes_start_addr, nlist_vec_ID_start_addr, nlist_num_vecs,
-    // std::cout << "3\n";
     char* nlist_PQ_codes_start_addr_char = (char*) malloc(nlist_PQ_codes_start_addr_size);
     nlist_PQ_codes_start_addr_fstream.read(nlist_PQ_codes_start_addr_char, nlist_PQ_codes_start_addr_size);
     if (!nlist_PQ_codes_start_addr_fstream) {
@@ -384,7 +386,6 @@ int main(int argc, char** argv)
     memcpy(&meta_data_init[0], nlist_PQ_codes_start_addr_char, nlist_PQ_codes_start_addr_size);
     free(nlist_PQ_codes_start_addr_char);
 
-    // std::cout << "4\n";
     char* nlist_vec_ID_start_addr_char = (char*) malloc(nlist_vec_ID_start_addr_size);
     nlist_vec_ID_start_addr_fstream.read(nlist_vec_ID_start_addr_char, nlist_vec_ID_start_addr_size);
     if (!nlist_vec_ID_start_addr_fstream) {
@@ -394,7 +395,6 @@ int main(int argc, char** argv)
     memcpy(&meta_data_init[nlist], nlist_vec_ID_start_addr_char, nlist_vec_ID_start_addr_size);
     free(nlist_vec_ID_start_addr_char);
     
-    // std::cout << "5\n";
     char* nlist_num_vecs_char = (char*) malloc(nlist_num_vecs_size);
     nlist_num_vecs_fstream.read(nlist_num_vecs_char, nlist_num_vecs_size);
     if (!nlist_num_vecs_fstream) {
@@ -404,7 +404,6 @@ int main(int argc, char** argv)
     memcpy(&meta_data_init[2 * nlist], nlist_num_vecs_char, nlist_num_vecs_size);
     free(nlist_num_vecs_char);
 
-    // std::cout << "6\n";
     char* product_quantizer_char = (char*) malloc(product_quantizer_size);
     product_quantizer_fstream.read(product_quantizer_char, product_quantizer_size);
     if (!product_quantizer_fstream) {
@@ -467,7 +466,7 @@ int main(int argc, char** argv)
     free(raw_gt_vec_ID_char);
 
     for (int i = 0; i < 10000; i++) {
-        gt_vec_ID[i] = raw_gt_vec_ID[i * 100 + 2];
+        gt_vec_ID[i] = raw_gt_vec_ID[i * len_per_result + result_start_bias];
     }
 
     char* raw_gt_dist_char = (char*) malloc(raw_gt_dist_size);
@@ -480,7 +479,7 @@ int main(int argc, char** argv)
     free(raw_gt_dist_char);
 
     for (int i = 0; i < 10000; i++) {
-        gt_dist[i] = raw_gt_dist[i * 100 + 2];
+        gt_dist[i] = raw_gt_dist[i * len_per_result + result_start_bias];
     }
 
     // on host, used to Select Cells to Scan
@@ -778,7 +777,7 @@ int main(int argc, char** argv)
         }
         
 
-        int start_addr_gt = query_id * 100 + 2;
+        int start_addr_gt = query_id * len_per_result + result_start_bias;
 
         // R1@K
         for (int k = 0; k < 1; k++) {
